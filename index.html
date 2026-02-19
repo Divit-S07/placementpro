@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PlacementPro Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05060e;--bg2:#090b18;--bg3:#0e1020;
+  --surf:#111425;--surf2:#171a2e;--surf3:#1d2138;
+  --bdr:rgba(255,255,255,.07);--bdr2:rgba(255,255,255,.13);
+  --tx:#eef0ff;--tx2:#8b92c0;--tx3:#464d72;
+  --pu:#7c6ff7;--pu2:#a99ffa;--pu3:rgba(124,111,247,.15);
+  --gn:#38d9a9;--gn2:rgba(56,217,169,.15);
+  --gd:#f5c842;--gd2:rgba(245,200,66,.15);
+  --rd:#f96a6a;--rd2:rgba(249,106,106,.15);
+  --cy:#34c9e8;--cy2:rgba(52,201,232,.15);
+  --or:#ff8c42;
+  --r:10px;--r2:16px;--r3:22px;
+  --sh:0 4px 30px rgba(0,0,0,.5);
+  --ff-head:'Clash Display',sans-serif;
+  --ff-body:'Satoshi',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;line-height:1.6}
+button{cursor:pointer;border:none;outline:none;font-family:var(--ff-body)}
+input,textarea,select{font-family:var(--ff-body);outline:none}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--pu);border-radius:3px}
+h1,h2,h3,h4{font-family:var(--ff-head);line-height:1.15}
+.hidden{display:none!important}
+.page{display:none;animation:fadeUp .35s ease both}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(124,111,247,.3)}50%{box-shadow:0 0 40px rgba(124,111,247,.6)}}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 24px;border-radius:var(--r);font-size:14px;font-weight:600;transition:all .2s;cursor:pointer;font-family:var(--ff-body)}
+.btn-primary{background:linear-gradient(135deg,var(--pu),#8b5cf6);color:#fff;box-shadow:0 4px 20px rgba(124,111,247,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,111,247,.55)}
+.btn-outline{background:transparent;color:var(--pu2);border:1.5px solid rgba(124,111,247,.4)}
+.btn-outline:hover{background:var(--pu3);border-color:var(--pu)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--tx2);border:1px solid var(--bdr)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);color:var(--tx)}
+.btn-success{background:linear-gradient(135deg,var(--gn),#6ee7b7);color:#0a2a1f}
+.btn-danger{background:linear-gradient(135deg,var(--rd),#fca5a5);color:#3b0f0f}
+.btn-sm{padding:7px 16px;font-size:12px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* INPUTS */
+.inp{background:var(--surf2);border:1.5px solid var(--bdr);border-radius:var(--r);padding:12px 16px;color:var(--tx);font-size:15px;width:100%;transition:border-color .2s}
+.inp:focus{border-color:var(--pu)}
+.inp::placeholder{color:var(--tx3)}
+.inp:disabled{opacity:.6;cursor:not-allowed}
+textarea.inp{resize:vertical;min-height:120px;line-height:1.7}
+.field{display:flex;flex-direction:column;gap:7px}
+.label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.6px;text-transform:uppercase}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:24px}
+.card-sm{border-radius:var(--r);padding:16px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.badge-pu{background:rgba(124,111,247,.15);color:var(--pu2);border:1px solid rgba(124,111,247,.3)}
+.badge-gn{background:var(--gn2);color:var(--gn);border:1px solid rgba(56,217,169,.3)}
+.badge-gd{background:var(--gd2);color:var(--gd);border:1px solid rgba(245,200,66,.3)}
+.badge-rd{background:var(--rd2);color:var(--rd);border:1px solid rgba(249,106,106,.3)}
+.badge-cy{background:var(--cy2);color:var(--cy);border:1px solid rgba(52,201,232,.3)}
+.badge-or{background:rgba(255,140,66,.15);color:var(--or);border:1px solid rgba(255,140,66,.3)}
+
+/* PROGRESS */
+.progress{background:var(--surf2);border-radius:100px;overflow:hidden}
+.progress-bar{height:6px;border-radius:100px;background:linear-gradient(90deg,var(--pu),var(--pu2));transition:width .5s ease}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* FLEX */
+.row{display:flex;align-items:center;gap:12px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.col{display:flex;flex-direction:column;gap:12px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:11px 16px;font-size:11px;color:var(--tx3);font-weight:700;letter-spacing:.6px;border-bottom:1px solid var(--bdr)}
+.tbl td{padding:13px 16px;font-size:14px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.tbl tr:hover td{background:var(--surf2)}
+.tbl-wrap{overflow-x:auto;border-radius:var(--r2)}
+
+/* TOAST */
+#toast{position:fixed;bottom:30px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast-item{background:var(--surf3);border:1px solid var(--bdr2);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:500;box-shadow:var(--sh);display:flex;align-items:center;gap:10px;animation:fadeUp .3s ease}
+.toast-success{border-color:rgba(56,217,169,.4);background:rgba(56,217,169,.08)}
+.toast-error{border-color:rgba(249,106,106,.4);background:rgba(249,106,106,.08)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(8px);padding:20px}
+.modal-box{background:var(--surf);border:1px solid var(--bdr2);border-radius:var(--r3);padding:40px;width:100%;max-width:500px;animation:fadeUp .3s ease;max-height:90vh;overflow-y:auto}
+
+/* LAYOUT */
+#sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;padding:24px 14px;min-height:100vh;position:fixed;top:0;left:0;z-index:50;transition:transform .3s}
+#main-content{margin-left:240px;flex:1;padding:36px 44px;min-height:100vh}
+
+/* SIDEBAR */
+.nav-logo{display:flex;align-items:center;gap:10px;padding:0 8px;margin-bottom:36px}
+.logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--pu),#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:18px;color:#fff;flex-shrink:0;animation:glow 3s ease-in-out infinite}
+.logo-text{font-family:var(--ff-head);font-weight:700;font-size:16px}
+.logo-sub{font-size:9px;color:var(--pu2);font-weight:700;letter-spacing:.8px;margin-top:2px}
+.nav-items{flex:1;display:flex;flex-direction:column;gap:4px}
+.nav-item{width:100%;text-align:left;padding:11px 14px;border-radius:var(--r);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--tx2);background:transparent;border:1px solid transparent;transition:all .15s;cursor:pointer;font-family:var(--ff-body);font-weight:500}
+.nav-item:hover{color:var(--tx);background:rgba(255,255,255,.04)}
+.nav-item.active{background:linear-gradient(135deg,rgba(124,111,247,.2),rgba(139,92,246,.1));color:var(--tx);border-color:rgba(124,111,247,.3);font-weight:600}
+.nav-icon{font-size:17px;width:22px;text-align:center}
+.nav-footer{border-top:1px solid var(--bdr);padding-top:16px;margin-top:12px}
+.user-mini{padding:10px 14px;margin-bottom:10px}
+.user-mini-name{font-weight:700;font-size:13px;margin-bottom:2px}
+.user-mini-email{font-size:11px;color:var(--tx3)}
+
+/* LANDING */
+#landing{min-height:100vh;background:var(--bg)}
+.land-nav{padding:20px 60px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;background:rgba(5,6,14,.9);backdrop-filter:blur(12px)}
+.land-hero{min-height:calc(100vh - 72px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;background:radial-gradient(ellipse at 20% 50%,rgba(124,111,247,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(52,201,232,.07) 0%,transparent 50%)}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:100px;background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.25);color:var(--pu2);font-size:13px;font-weight:600;margin-bottom:28px;animation:float 3s ease-in-out infinite}
+.hero-h1{font-family:var(--ff-head);font-size:clamp(38px,6.5vw,68px);font-weight:700;line-height:1.08;margin-bottom:22px;background:linear-gradient(135deg,#eef0ff 20%,var(--pu2) 65%,var(--cy) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:bgMove 6s ease infinite}
+.hero-sub{font-size:18px;color:var(--tx2);max-width:580px;margin:0 auto 44px;line-height:1.75}
+
+/* PORTAL CARDS */
+.portal-selector{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+.portal-card{background:var(--surf);border:2px solid var(--bdr);border-radius:var(--r2);padding:28px 36px;text-align:center;cursor:pointer;transition:all .25s;min-width:180px}
+.portal-card:hover{transform:translateY(-6px)}
+.portal-card.student:hover{border-color:var(--pu);box-shadow:0 20px 50px rgba(124,111,247,.25)}
+.portal-card.admin:hover{border-color:var(--gn);box-shadow:0 20px 50px rgba(56,217,169,.25)}
+.portal-card.holder:hover{border-color:var(--gd);box-shadow:0 20px 50px rgba(245,200,66,.25)}
+.portal-card .portal-icon{font-size:44px;margin-bottom:14px}
+.portal-card .portal-title{font-family:var(--ff-head);font-size:18px;font-weight:700;margin-bottom:6px}
+.portal-card .portal-desc{font-size:12px;color:var(--tx3);line-height:1.5}
+
+/* COMPANIES STRIP */
+.land-companies{padding:20px 60px 70px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1200px;margin:0 auto}
+.co-mini-card{background:var(--surf);border-radius:var(--r2);padding:20px;text-align:center;cursor:pointer;transition:all .25s;border:1px solid var(--bdr)}
+.co-mini-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.co-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:12px;color:#fff;margin:0 auto 12px}
+.co-name{font-family:var(--ff-head);font-weight:600;font-size:15px;margin-bottom:5px}
+.co-pkg{font-size:11px;color:var(--tx3);margin-bottom:10px}
+
+/* FEATURES */
+.land-features{padding:80px 60px;background:var(--bg2)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:40px auto 0}
+.feat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:28px;transition:all .2s}
+.feat-card:hover{border-color:var(--bdr2);transform:translateY(-3px)}
+.feat-icon{font-size:36px;margin-bottom:16px}
+.feat-title{font-family:var(--ff-head);font-size:17px;font-weight:600;margin-bottom:10px}
+.feat-desc{font-size:14px;color:var(--tx2);line-height:1.75}
+.section-tag{display:inline-block;padding:6px 18px;border-radius:100px;background:var(--pu3);color:var(--pu2);font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+.section-h2{font-family:var(--ff-head);font-size:clamp(24px,4vw,36px);font-weight:700;margin-bottom:12px}
+
+/* EXPERIENCES */
+.exp-section{padding:80px 60px;background:var(--bg)}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:40px auto 0}
+.exp-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:26px;transition:all .2s;position:relative;overflow:hidden}
+.exp-card:hover{border-color:var(--bdr2);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.exp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.exp-card.tcs::before{background:linear-gradient(90deg,#003366,#00b4d8)}
+.exp-card.infosys::before{background:linear-gradient(90deg,#007cc3,#f5a623)}
+.exp-card.wipro::before{background:linear-gradient(90deg,#341c5c,#9b59b6)}
+.exp-card.zoho::before{background:linear-gradient(90deg,#c0392b,#e67e22)}
+.exp-card.amazon::before{background:linear-gradient(90deg,#FF9900,#232F3E)}
+.exp-card.microsoft::before{background:linear-gradient(90deg,#00A4EF,#7FBA00)}
+.exp-card.accenture::before{background:linear-gradient(90deg,#A100FF,#7B2FBE)}
+.exp-card.cognizant::before{background:linear-gradient(90deg,#003366,#00a0e0)}
+.exp-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.exp-meta{font-size:11px;color:var(--tx3);margin-top:3px}
+.exp-quote{font-size:13px;line-height:1.8;color:var(--tx2);margin:14px 0;padding:12px 14px;background:var(--surf2);border-radius:9px;border-left:3px solid var(--pu)}
+.exp-tip{display:flex;gap:8px;font-size:12px;color:var(--tx2);margin-bottom:7px}
+.exp-tip::before{content:'→';color:var(--gn);flex-shrink:0;font-weight:700}
+
+/* STAT CARDS */
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:24px;transition:all .2s}
+.stat-num{font-family:var(--ff-head);font-size:32px;font-weight:700;margin:10px 0 4px}
+.stat-label{font-size:13px;color:var(--tx2)}
+.stat-icon{font-size:24px}
+
+/* COMPANY CARDS */
+.company-card{background:var(--surf);border-radius:var(--r2);padding:24px;cursor:pointer;transition:all .25s}
+.company-card:hover{transform:translateY(-4px)}
+.co-logo{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.round-pill{padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+
+/* TABS */
+.tab-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.tab-btn{padding:8px 18px;border-radius:var(--r);font-size:13px;font-weight:600;border:1.5px solid var(--bdr);background:var(--surf2);color:var(--tx2);cursor:pointer;transition:all .15s;font-family:var(--ff-body)}
+.tab-btn.active,.tab-btn:hover{background:var(--pu3);border-color:var(--pu);color:var(--pu2)}
+
+/* EXAM UI */
+.exam-wrap{max-width:980px;margin:0 auto}
+.exam-header{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:18px 26px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.timer-display{font-family:var(--ff-head);font-size:28px;font-weight:700;color:var(--gn)}
+.timer-display.warn{color:var(--gd);animation:pulse 1.5s infinite}
+.timer-display.danger{color:var(--rd);animation:pulse .8s infinite}
+.q-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:28px;margin-bottom:18px}
+.q-text{font-size:17px;line-height:1.75;font-weight:500;margin-bottom:24px}
+.option{padding:14px 18px;border-radius:var(--r);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;border:1.5px solid var(--bdr);background:var(--surf2);margin-bottom:10px;font-size:15px}
+.option:hover{border-color:rgba(124,111,247,.4);background:rgba(124,111,247,.07)}
+.option.selected{border-color:var(--pu);background:rgba(124,111,247,.12)}
+.opt-letter{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:var(--surf3);color:var(--tx3);border:2px solid var(--bdr)}
+.option.selected .opt-letter{background:var(--pu);color:#fff;border-color:var(--pu)}
+.q-nav-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:20px;align-self:start;position:sticky;top:20px}
+.q-nav-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:18px}
+.q-nav-btn{aspect-ratio:1;border-radius:8px;font-size:12px;font-weight:700;border:1.5px solid var(--bdr);background:var(--surf2);color:var(--tx3);cursor:pointer;transition:all .15s;font-family:var(--ff-body)}
+.q-nav-btn.current{background:var(--pu);color:#fff;border-color:var(--pu)}
+.q-nav-btn.answered{background:rgba(56,217,169,.15);color:var(--gn);border-color:rgba(56,217,169,.4)}
+.code-area{background:#0d1117;border-radius:var(--r);overflow:hidden;border:1px solid rgba(255,255,255,.1);margin-bottom:14px}
+.code-header{padding:10px 16px;background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--tx3);border-bottom:1px solid rgba(255,255,255,.07)}
+.code-editor{width:100%;min-height:220px;background:transparent;color:#e6edf3;font-size:14px;line-height:1.65;padding:16px;font-family:'Fira Code',monospace;resize:vertical;border:none}
+.code-output{background:#0d1117;border-radius:var(--r);padding:16px;font-family:monospace;font-size:13px;color:#e6edf3;border:1px solid rgba(255,255,255,.1);white-space:pre-wrap;min-height:60px}
+
+/* RESULT */
+.result-wrap{max-width:560px;margin:0 auto}
+.result-score-ring{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 24px;font-family:var(--ff-head)}
+.result-num{font-size:46px;font-weight:700}
+
+/* PERFORMANCE */
+.perf-bar-wrap{margin-bottom:12px}
+.perf-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;color:var(--tx2)}
+
+/* PROFILE */
+.avatar-lg{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:30px;color:#fff;background:linear-gradient(135deg,var(--pu),#8b5cf6);flex-shrink:0}
+
+/* STUDENT DETAIL */
+.student-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.detail-item{background:var(--surf2);border-radius:10px;padding:14px}
+.detail-item .di-label{font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:.5px;margin-bottom:5px}
+.detail-item .di-val{font-size:15px;font-weight:600}
+
+/* HOLDER ADMIN CARD */
+.holder-admin-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:22px;transition:all .2s}
+.holder-admin-card:hover{border-color:rgba(56,217,169,.3);transform:translateY(-2px)}
+
+/* CO QUESTIONS */
+.co-question-item{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.co-question-item:hover{border-color:var(--bdr2)}
+
+/* COMPANIES GRID ON LANDING (4 cols scroll) */
+.land-co-scroll{padding:10px 60px 60px;max-width:1300px;margin:0 auto}
+.land-co-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+@media(max-width:1024px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.land-co-grid{grid-template-columns:repeat(2,1fr)}.feat-grid{grid-template-columns:1fr 1fr}.exp-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){#sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#main-content{margin-left:0;padding:20px}.land-nav{padding:16px 20px}.land-co-grid,.land-companies{grid-template-columns:1fr 1fr;padding:16px}.land-features,.exp-section{padding:50px 20px}.g2,.g3,.g4,.feat-grid,.exp-grid{grid-template-columns:1fr}.land-hero{padding:40px 16px}.portal-selector{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ══════════ PORTAL MODAL ══════════ -->
+<div id="portal-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:420px;text-align:center">
+    <div class="logo-icon" style="margin:0 auto 14px;width:50px;height:50px;font-size:20px;animation:none">P</div>
+    <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Choose Your Portal</h2>
+    <p style="color:var(--tx2);font-size:14px;margin-bottom:26px">Select the portal that matches your role</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button class="btn btn-block" style="background:rgba(124,111,247,.12);border:1.5px solid rgba(124,111,247,.4);color:var(--pu2);padding:15px;font-size:15px;border-radius:var(--r2)" onclick="openAuth('student-login')">🎓 Student Portal</button>
+      <button class="btn btn-block" style="background:rgba(56,217,169,.08);border:1.5px solid rgba(56,217,169,.3);color:var(--gn);padding:15px;font-size:15px;border-radius:var(--r2)" onclick="openAuth('admin-login')">🛡 Admin Portal</button>
+      <button class="btn btn-block" style="background:rgba(245,200,66,.08);border:1.5px solid rgba(245,200,66,.3);color:var(--gd);padding:15px;font-size:15px;border-radius:var(--r2)" onclick="openAuth('holder-login')">👑 Website Holder Portal</button>
+    </div>
+    <button style="margin-top:18px;background:none;color:var(--tx3);font-size:13px;cursor:pointer;font-family:var(--ff-body)" onclick="closePortal()">✕ Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════ AUTH MODAL ══════════ -->
+<div id="auth-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div style="text-align:center;margin-bottom:26px">
+      <div id="auth-portal-badge" style="margin-bottom:12px"></div>
+      <div class="logo-icon" style="margin:0 auto 14px;width:50px;height:50px;font-size:20px;animation:none">P</div>
+      <h2 id="auth-title" style="font-size:24px;font-weight:700;margin-bottom:6px">Welcome Back</h2>
+      <p id="auth-sub" style="color:var(--tx2);font-size:14px">Sign in to continue</p>
+    </div>
+    <!-- Admin register extra fields -->
+    <div id="auth-admin-reg-fields" class="col hidden">
+      <div class="field"><label class="label">Full Name *</label><input class="inp" id="admin-reg-name" placeholder="Your full name"/></div>
+      <div class="field"><label class="label">Department</label><input class="inp" id="admin-reg-dept" placeholder="e.g. Training & Placement"/></div>
+      <div class="field"><label class="label">College / Institution</label><input class="inp" id="admin-reg-college" placeholder="e.g. JNTU Hyderabad"/></div>
+    </div>
+    <!-- Student register extra fields -->
+    <div id="auth-register-fields" class="col hidden">
+      <div class="field"><label class="label">Full Name *</label><input class="inp" id="reg-name" placeholder="e.g. Arjun Sharma"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label class="label">Roll No *</label><input class="inp" id="reg-roll" placeholder="CS2024001"/></div>
+        <div class="field"><label class="label">Branch</label><input class="inp" id="reg-branch" placeholder="CSE"/></div>
+      </div>
+      <div class="field"><label class="label">CGPA</label><input class="inp" id="reg-cgpa" type="number" placeholder="8.5" step="0.1" min="0" max="10"/></div>
+    </div>
+    <div class="col" style="margin-top:4px">
+      <div class="field"><label class="label">Email *</label><input class="inp" id="auth-email" placeholder="you@example.com" type="email"/></div>
+      <div class="field"><label class="label">Password *</label><input class="inp" id="auth-pass" placeholder="••••••••" type="password"/></div>
+      <div id="auth-hint" style="background:var(--surf2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--tx3);display:none"></div>
+      <div id="auth-error" class="hidden" style="background:rgba(249,106,106,.1);border:1px solid rgba(249,106,106,.3);border-radius:8px;padding:10px 14px;color:var(--rd);font-size:14px"></div>
+      <button class="btn btn-primary btn-block" id="auth-submit-btn" onclick="submitAuth()">Sign In</button>
+      <div id="auth-register-toggle" class="hidden" style="text-align:center;font-size:14px;color:var(--tx2)">
+        <span id="auth-switch-text">Don't have an account?</span>
+        <button style="background:none;color:var(--pu2);font-weight:700;margin-left:6px;font-family:var(--ff-body)" onclick="toggleAuthMode()" id="auth-switch-btn">Register</button>
+      </div>
+    </div>
+    <button style="display:block;margin:14px auto 0;background:none;color:var(--tx3);font-size:13px;cursor:pointer;font-family:var(--ff-body)" onclick="closeAuth()">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════ STUDENT DETAIL MODAL ══════════ -->
+<div id="student-detail-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:560px">
+    <div class="row-between" style="margin-bottom:20px">
+      <h3 style="font-size:20px;font-weight:700">Student Details</h3>
+      <button style="background:none;color:var(--tx3);font-size:20px;cursor:pointer" onclick="document.getElementById('student-detail-modal').classList.add('hidden')">✕</button>
+    </div>
+    <div id="student-detail-content"></div>
+  </div>
+</div>
+
+<!-- ══════════ SHARE EXPERIENCE MODAL ══════════ -->
+<div id="share-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:540px">
+    <div class="row-between" style="margin-bottom:22px">
+      <h3 style="font-size:20px;font-weight:700">🎉 Share Your Experience</h3>
+      <button style="background:none;color:var(--tx3);font-size:20px;cursor:pointer" onclick="closeShareModal()">✕</button>
+    </div>
+    <div class="col">
+      <div class="field"><label class="label">Company</label>
+        <select class="inp" id="share-company">
+          <option>TCS</option><option>Infosys</option><option>Wipro</option><option>Zoho</option>
+          <option>Amazon</option><option>Microsoft</option><option>Accenture</option><option>Cognizant</option>
+          <option>HCL</option><option>Capgemini</option><option>IBM</option><option>LTI</option>
+          <option>HCL</option><option>Capgemini</option>
+        </select>
+      </div>
+      <div class="field"><label class="label">Role / Position</label><input class="inp" id="share-role" placeholder="e.g. Software Engineer"/></div>
+      <div class="field"><label class="label">Package Offered</label><input class="inp" id="share-package" placeholder="e.g. 6.5 LPA"/></div>
+      <div class="field"><label class="label">Your Experience *</label><textarea class="inp" id="share-experience" placeholder="Describe your interview journey..." style="min-height:100px"></textarea></div>
+      <div class="field"><label class="label">Tips (one per line)</label><textarea class="inp" id="share-tips" placeholder="Key tips for other students..." style="min-height:80px"></textarea></div>
+      <button class="btn btn-primary btn-block" onclick="submitExperience()">🚀 Share Experience</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADD ADMIN MODAL (by Holder) ══════════ -->
+<div id="add-admin-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:440px">
+    <div class="row-between" style="margin-bottom:22px">
+      <h3 style="font-size:20px;font-weight:700">Add New Admin</h3>
+      <button style="background:none;color:var(--tx3);font-size:20px;cursor:pointer" onclick="document.getElementById('add-admin-modal').classList.add('hidden')">✕</button>
+    </div>
+    <div class="col">
+      <div class="field"><label class="label">Full Name *</label><input class="inp" id="new-admin-name" placeholder="Admin Name"/></div>
+      <div class="field"><label class="label">Email *</label><input class="inp" id="new-admin-email" placeholder="admin@example.com" type="email"/></div>
+      <div class="field"><label class="label">Password *</label><input class="inp" id="new-admin-pass" placeholder="Password" type="password"/></div>
+      <div class="field"><label class="label">Department</label><input class="inp" id="new-admin-dept" placeholder="e.g. Training & Placement"/></div>
+      <button class="btn btn-success btn-block" onclick="addNewAdmin()">✓ Create Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ LANDING PAGE ══════════════════ -->
+<div id="landing">
+  <nav class="land-nav">
+    <div class="row" style="gap:10px">
+      <div class="logo-icon" style="animation:none">P</div>
+      <div style="font-family:var(--ff-head);font-weight:700;font-size:18px">Placement<span style="color:var(--pu2)">Pro</span></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost btn-sm" onclick="showPortalSelector()">Sign In</button>
+      <button class="btn btn-primary btn-sm" onclick="openAuth('student-register')">Get Started Free</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="land-hero">
+    <div style="max-width:820px">
+      <div class="hero-chip">🎓 Trusted by 50,000+ Students Across India</div>
+      <h1 class="hero-h1">Crack Your Dream<br>Company Placement</h1>
+      <p class="hero-sub">Prepare for TCS, Infosys, Amazon, Microsoft & more with company-specific exam patterns, real-time mock tests, and detailed performance analytics.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:40px">
+        <button class="btn btn-primary" style="padding:14px 36px;font-size:16px" onclick="openAuth('student-register')">Start Preparing Free →</button>
+        <button class="btn btn-outline" style="padding:14px 28px" onclick="showPortalSelector()">Sign In to Portal</button>
+      </div>
+      <div class="portal-selector">
+        <div class="portal-card student" onclick="openAuth('student-login')"><div class="portal-icon">🎓</div><div class="portal-title">Student</div><div class="portal-desc">Take tests, view results & company questions</div></div>
+        <div class="portal-card admin" onclick="openAuth('admin-login')"><div class="portal-icon">🛡</div><div class="portal-title">Admin</div><div class="portal-desc">Manage students & view performance</div></div>
+        <div class="portal-card holder" onclick="openAuth('holder-login')"><div class="portal-icon">👑</div><div class="portal-title">Website Holder</div><div class="portal-desc">Manage admins & platform settings</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANIES STRIP -->
+  <div class="land-co-scroll">
+    <div style="text-align:center;margin-bottom:28px">
+      <div class="section-tag">12+ Top Companies</div>
+      <h2 class="section-h2" style="font-size:28px">Prepare for India's Top Recruiters</h2>
+    </div>
+    <div class="land-co-grid">
+      <div class="co-mini-card"><div class="co-icon" style="background:#003366">TCS</div><div class="co-name">TCS</div><div class="co-pkg">₹3.5–7 LPA · 450 seats</div><span class="badge badge-gd">Medium</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#007cc3">INF</div><div class="co-name">Infosys</div><div class="co-pkg">₹3.6–8 LPA · 320 seats</div><span class="badge badge-or">Medium-Hard</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#341c5c">WIP</div><div class="co-name">Wipro</div><div class="co-pkg">₹3.5–6.5 LPA · 280 seats</div><span class="badge badge-gn">Easy-Med</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#c0392b">ZOH</div><div class="co-name">Zoho</div><div class="co-pkg">₹5–12 LPA · 120 seats</div><span class="badge badge-rd">Hard</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#FF9900;color:#111">AMZ</div><div class="co-name">Amazon</div><div class="co-pkg">₹8–25 LPA · 60 seats</div><span class="badge badge-rd">Hard</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#00A4EF">MSF</div><div class="co-name">Microsoft</div><div class="co-pkg">₹12–40 LPA · 40 seats</div><span class="badge badge-rd">Very Hard</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#A100FF">ACC</div><div class="co-name">Accenture</div><div class="co-pkg">₹4.5–8 LPA · 200 seats</div><span class="badge badge-gd">Medium</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#1a6eb5">CTS</div><div class="co-name">Cognizant</div><div class="co-pkg">₹4–7 LPA · 250 seats</div><span class="badge badge-gn">Easy-Med</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#0077C8">HCL</div><div class="co-name">HCL Tech</div><div class="co-pkg">₹3.5–6 LPA · 380 seats</div><span class="badge badge-gn">Easy-Med</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#0070AD">CAP</div><div class="co-name">Capgemini</div><div class="co-pkg">₹4–7.5 LPA · 300 seats</div><span class="badge badge-gd">Medium</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#1F70C1">IBM</div><div class="co-name">IBM India</div><div class="co-pkg">₹5–10 LPA · 150 seats</div><span class="badge badge-or">Medium-Hard</span></div>
+      <div class="co-mini-card"><div class="co-icon" style="background:#E63312">LTI</div><div class="co-name">LTIMindtree</div><div class="co-pkg">₹4.5–9 LPA · 180 seats</div><span class="badge badge-gd">Medium</span></div>
+    </div>
+  </div>
+
+  <!-- INTERVIEW EXPERIENCES -->
+  <div class="exp-section">
+    <div style="text-align:center;max-width:1100px;margin:0 auto">
+      <div class="section-tag">🏆 Success Stories</div>
+      <h2 class="section-h2">Students Who Cracked It!</h2>
+      <p style="color:var(--tx2);font-size:15px">Real experiences from students placed through PlacementPro</p>
+    </div>
+    <div class="exp-grid" style="max-width:1100px;margin:40px auto 0" id="experiences-container"></div>
+    <div style="text-align:center;margin-top:28px">
+      <button class="btn btn-outline" onclick="openShareModal()" id="share-exp-btn" style="display:none">✍ Share Your Experience</button>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="land-features">
+    <div style="text-align:center">
+      <div class="section-tag">Platform Features</div>
+      <h2 class="section-h2">Everything to Get You Placed</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">⏱</div><div class="feat-title">Real-time Mock Tests</div><p class="feat-desc">Timed exams with countdown, auto-submit, and smooth question navigation.</p></div>
+      <div class="feat-card"><div class="feat-icon">💻</div><div class="feat-title">Online Code Editor</div><p class="feat-desc">Built-in JS editor with compile & run support — just like the real thing.</p></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Performance Analytics</div><p class="feat-desc">Round-wise score tracking and visual charts to identify weak areas.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏢</div><div class="feat-title">12+ Companies</div><p class="feat-desc">TCS, Infosys, Amazon, Microsoft, Zoho, Wipro, Accenture, Cognizant, HCL, Capgemini, IBM, LTIMindtree.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏆</div><div class="feat-title">Interview Experiences</div><p class="feat-desc">Read & share real placement experiences from successful students.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛡</div><div class="feat-title">Multi-Role Access</div><p class="feat-desc">Separate portals for students, admins and website holder with role-based access.</p></div>
+    </div>
+  </div>
+
+  <div style="background:var(--bg2);border-top:1px solid var(--bdr);padding:28px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
+    <div style="font-family:var(--ff-head);font-weight:700;font-size:16px">Placement<span style="color:var(--pu2)">Pro</span> Portal</div>
+    <div style="font-size:13px;color:var(--tx3)">© 2025 PlacementPro. All rights reserved.</div>
+    <div style="display:flex;gap:16px;font-size:13px;color:var(--tx2)"><span>TCS</span><span>Infosys</span><span>Amazon</span><span>Microsoft</span><span>Wipro</span><span>Zoho</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<div id="app" class="hidden" style="display:none">
+  <div id="sidebar">
+    <div class="nav-logo">
+      <div class="logo-icon">P</div>
+      <div><div class="logo-text">Placement<span style="color:var(--pu2)">Pro</span></div><div id="sidebar-role-label" class="logo-sub">PORTAL</div></div>
+    </div>
+    <div class="nav-items" id="nav-items"></div>
+    <div class="nav-footer">
+      <div class="user-mini">
+        <div class="user-mini-name" id="sidebar-user-name">Loading...</div>
+        <div class="user-mini-email" id="sidebar-user-email">...</div>
+        <div style="margin-top:8px" id="sidebar-user-badge"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="logout()" style="justify-content:center">🚪 Sign Out</button>
+    </div>
+  </div>
+
+  <div id="main-content">
+    <!-- STUDENT PAGES -->
+    <div id="page-dashboard" class="page">
+      <div style="margin-bottom:28px"><h1 id="dash-greeting" style="font-size:26px;font-weight:700;margin-bottom:6px"></h1><p style="color:var(--tx2)">Continue your placement preparation journey</p></div>
+      <div class="g4" style="margin-bottom:26px" id="dash-stats"></div>
+      <div class="g2">
+        <div class="card"><h3 style="font-family:var(--ff-head);font-size:17px;font-weight:600;margin-bottom:20px">Company Tracks</h3><div id="dash-company-tracks" class="col" style="gap:12px"></div></div>
+        <div class="col">
+          <div class="card"><h3 style="font-family:var(--ff-head);font-size:16px;font-weight:600;margin-bottom:16px">Quick Actions</h3>
+            <div class="col" style="gap:10px">
+              <button class="btn btn-primary btn-block" onclick="navigate('companies')">🚀 Start Mock Test</button>
+              <button class="btn btn-outline btn-block" onclick="navigate('co-questions')">📚 Company Questions</button>
+              <button class="btn btn-ghost btn-block" onclick="navigate('performance')">📊 View Analytics</button>
+            </div>
+          </div>
+          <div class="card"><h3 style="font-family:var(--ff-head);font-size:16px;font-weight:600;margin-bottom:16px">Recent Results</h3><div id="dash-recent"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-companies" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Companies</h1><p style="color:var(--tx2)">Choose a company to start your preparation</p></div>
+      <div id="companies-list" class="g2"></div>
+      <div id="company-detail" class="hidden"></div>
+    </div>
+
+    <div id="page-co-questions" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Company Interview Questions</h1><p style="color:var(--tx2)">Browse real questions asked in company interviews</p></div>
+      <div class="tab-row" id="co-q-tabs"></div>
+      <div id="co-q-content"></div>
+    </div>
+
+    <div id="page-performance" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Performance Analytics</h1><p style="color:var(--tx2)">Track your progress across all companies</p></div>
+      <div id="perf-content"></div>
+    </div>
+
+    <div id="page-profile" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">My Profile</h1><p style="color:var(--tx2)">Manage your personal information</p></div>
+      <div style="max-width:640px">
+        <div class="card">
+          <div class="row" style="margin-bottom:26px;gap:20px">
+            <div class="avatar-lg" id="profile-avatar">A</div>
+            <div>
+              <h2 id="profile-name-display" style="font-size:20px;font-weight:700;margin-bottom:4px"></h2>
+              <p id="profile-email-display" style="color:var(--tx2);font-size:14px;margin-bottom:10px"></p>
+              <div id="profile-badges" class="row" style="gap:8px"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field"><label class="label">Full Name</label><input class="inp" id="pf-name"/></div>
+            <div class="field"><label class="label">Email (read-only)</label><input class="inp" id="pf-email" disabled/></div>
+            <div class="field"><label class="label">Branch</label><input class="inp" id="pf-branch" placeholder="Computer Science"/></div>
+            <div class="field"><label class="label">CGPA</label><input class="inp" id="pf-cgpa" type="number" placeholder="8.5"/></div>
+            <div class="field"><label class="label">Roll No (read-only)</label><input class="inp" id="pf-roll" disabled/></div>
+            <div class="field"><label class="label">Phone</label><input class="inp" id="pf-phone" placeholder="+91 9876543210"/></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+            <button class="btn btn-danger" onclick="confirmDeleteAccount()">🗑 Delete Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM PAGES -->
+    <div id="page-exam" class="page">
+      <div class="exam-wrap">
+        <div class="exam-header">
+          <div><div id="exam-title" style="font-family:var(--ff-head);font-weight:700;font-size:17px;margin-bottom:3px"></div><div id="exam-q-counter" style="font-size:12px;color:var(--tx3)"></div></div>
+          <div class="row" style="gap:20px">
+            <div style="text-align:right"><div id="exam-timer" class="timer-display">00:00</div><div style="font-size:10px;color:var(--tx3);letter-spacing:.6px">TIME LEFT</div></div>
+            <button class="btn btn-outline btn-sm" onclick="submitExam(false)">Submit Exam</button>
+          </div>
+        </div>
+        <div id="exam-timer-bar" style="height:4px;border-radius:100px;background:var(--surf2);margin-bottom:20px;overflow:hidden">
+          <div id="exam-timer-fill" style="height:100%;background:var(--gn);border-radius:100px;transition:width 1s linear"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 240px;gap:20px">
+          <div>
+            <div class="q-card" id="exam-q-area"></div>
+            <div class="row-between">
+              <button class="btn btn-ghost btn-sm" id="exam-prev-btn" onclick="examNav(-1)">← Previous</button>
+              <button class="btn btn-primary btn-sm" id="exam-next-btn" onclick="examNav(1)">Next →</button>
+            </div>
+          </div>
+          <div class="q-nav-panel">
+            <div style="font-size:11px;font-weight:700;color:var(--tx3);letter-spacing:.7px;margin-bottom:14px">NAVIGATOR</div>
+            <div class="q-nav-grid" id="q-nav-grid"></div>
+            <div class="col" style="gap:7px;font-size:12px;color:var(--tx3)">
+              <div class="row" style="gap:8px"><div style="width:12px;height:12px;border-radius:3px;background:var(--pu);flex-shrink:0"></div>Current</div>
+              <div class="row" style="gap:8px"><div style="width:12px;height:12px;border-radius:3px;background:rgba(56,217,169,.3);flex-shrink:0"></div><span id="nav-answered">Answered (0)</span></div>
+              <div class="row" style="gap:8px"><div style="width:12px;height:12px;border-radius:3px;background:var(--surf2);flex-shrink:0"></div><span id="nav-unanswered">Unanswered</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-result" class="page">
+      <div class="result-wrap">
+        <div class="card" style="text-align:center;padding:50px 40px">
+          <div id="result-emoji" style="font-size:70px;margin-bottom:18px">🏆</div>
+          <h2 id="result-title" style="font-size:28px;font-weight:700;margin-bottom:8px"></h2>
+          <p id="result-sub" style="color:var(--tx2);margin-bottom:32px;font-size:15px"></p>
+          <div class="result-score-ring" id="result-ring" style="background:var(--surf2)">
+            <div class="result-num" id="result-pct"></div>
+            <div style="font-size:13px;font-weight:600" id="result-pct-label"></div>
+          </div>
+          <div class="g2" style="margin-bottom:26px;text-align:left">
+            <div style="background:var(--surf2);border-radius:12px;padding:16px"><div style="font-size:11px;color:var(--tx3);margin-bottom:8px;font-weight:700;letter-spacing:.5px">STATUS</div><div id="result-status-badge"></div></div>
+            <div style="background:var(--surf2);border-radius:12px;padding:16px"><div style="font-size:11px;color:var(--tx3);margin-bottom:8px;font-weight:700;letter-spacing:.5px">SCORE</div><div id="result-score-text" style="font-weight:700;font-size:15px"></div></div>
+          </div>
+          <div id="result-unlock-msg" class="hidden" style="background:rgba(56,217,169,.1);border:1px solid rgba(56,217,169,.3);border-radius:12px;padding:14px;margin-bottom:22px;color:var(--gn);font-weight:600">🎉 Next round has been unlocked!</div>
+          <div class="row" style="gap:12px;justify-content:center">
+            <button class="btn btn-primary" onclick="navigate('companies')">← Back to Companies</button>
+            <button class="btn btn-outline" onclick="navigate('performance')">📊 Performance</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN PAGES -->
+    <div id="page-admin-dashboard" class="page">
+      <div style="margin-bottom:28px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Admin Dashboard</h1><p style="color:var(--tx2)">Platform overview and management</p></div>
+      <div class="g4" style="margin-bottom:26px" id="admin-stats"></div>
+      <div class="g2" id="admin-overview"></div>
+    </div>
+
+    <div id="page-admin-students" class="page">
+      <div class="row-between" style="margin-bottom:22px">
+        <div><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Students</h1><p id="admin-students-count" style="color:var(--tx2)"></p></div>
+      </div>
+      <input class="inp" id="student-search" placeholder="🔍 Search by name, email, or roll number..." style="max-width:420px;margin-bottom:20px" oninput="filterStudents()"/>
+      <div class="card tbl-wrap"><table class="tbl" id="students-table"></table></div>
+    </div>
+
+    <div id="page-admin-companies" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Companies</h1><p style="color:var(--tx2)">All registered placement partner companies</p></div>
+      <div class="g2" id="admin-companies-grid"></div>
+    </div>
+
+    <div id="page-admin-questions" class="page">
+      <div style="margin-bottom:22px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Question Bank</h1><p style="color:var(--tx2)">Browse exam questions by round type</p></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px" id="qbank-tabs"></div>
+      <div id="qbank-list" class="col" style="gap:14px"></div>
+    </div>
+
+    <div id="page-admin-results" class="page">
+      <div style="margin-bottom:26px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Exam Results</h1><p id="results-count" style="color:var(--tx2)"></p></div>
+      <div class="card tbl-wrap"><table class="tbl" id="results-table"></table></div>
+    </div>
+
+    <!-- WEBSITE HOLDER PAGES -->
+    <div id="page-holder-dashboard" class="page">
+      <div style="margin-bottom:28px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">👑 Website Holder Dashboard</h1><p style="color:var(--tx2)">Platform-wide overview and admin management</p></div>
+      <div class="g4" style="margin-bottom:26px" id="holder-stats"></div>
+      <div class="card"><h3 style="font-family:var(--ff-head);font-size:17px;font-weight:600;margin-bottom:18px">Platform Summary</h3><div id="holder-summary"></div></div>
+    </div>
+
+    <div id="page-holder-admins" class="page">
+      <div class="row-between" style="margin-bottom:22px">
+        <div><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">Admin Management</h1><p id="holder-admins-count" style="color:var(--tx2)"></p></div>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('add-admin-modal').classList.remove('hidden')">+ Add Admin</button>
+      </div>
+      <div id="admins-grid" class="g3"></div>
+    </div>
+
+    <div id="page-holder-students" class="page">
+      <div style="margin-bottom:22px"><h1 style="font-size:26px;font-weight:700;margin-bottom:6px">All Students</h1><p style="color:var(--tx2)">Platform-wide student overview</p></div>
+      <div class="card tbl-wrap"><table class="tbl" id="holder-students-table"></table></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA — 8 COMPANIES
+// ═══════════════════════════════════════
+const COMPANIES = {
+  TCS:{name:"Tata Consultancy Services",logo:"TCS",color:"#003366",accent:"#00b4d8",difficulty:"Medium",difBadge:"badge-gd",rounds:["Aptitude","Technical","Coding","HR"],desc:"India's largest IT company. Focus on numerical ability and logical reasoning.",package:"₹3.5–7 LPA",slots:450},
+  Infosys:{name:"Infosys Limited",logo:"INF",color:"#007cc3",accent:"#f5a623",difficulty:"Medium-Hard",difBadge:"badge-or",rounds:["Aptitude","Technical","Coding","HR"],desc:"Global IT leader. Strong verbal, logical & analytical skills needed.",package:"₹3.6–8 LPA",slots:320},
+  Wipro:{name:"Wipro Technologies",logo:"WIP",color:"#341c5c",accent:"#9b59b6",difficulty:"Easy-Medium",difBadge:"badge-gn",rounds:["Aptitude","Technical","HR"],desc:"Technology company focused on digital transformation and IT services.",package:"₹3.5–6.5 LPA",slots:280},
+  Zoho:{name:"Zoho Corporation",logo:"ZOH",color:"#c0392b",accent:"#e67e22",difficulty:"Hard",difBadge:"badge-rd",rounds:["Aptitude","Technical","Coding","HR"],desc:"Product-based company with rigorous technical & programming rounds.",package:"₹5–12 LPA",slots:120},
+  Amazon:{name:"Amazon India",logo:"AMZ",color:"#FF9900",accent:"#232F3E",difficulty:"Very Hard",difBadge:"badge-rd",rounds:["Aptitude","Technical","Coding","HR"],desc:"World's largest e-commerce & cloud company. Deep DSA & system design focus.",package:"₹8–25 LPA",slots:60},
+  Microsoft:{name:"Microsoft India",logo:"MSF",color:"#00A4EF",accent:"#7FBA00",difficulty:"Very Hard",difBadge:"badge-rd",rounds:["Technical","Coding","HR"],desc:"Global tech giant. Requires strong CS fundamentals, DSA & problem solving.",package:"₹12–40 LPA",slots:40},
+  Accenture:{name:"Accenture Technology",logo:"ACC",color:"#A100FF",accent:"#7B2FBE",difficulty:"Medium",difBadge:"badge-gd",rounds:["Aptitude","Technical","HR"],desc:"Global consulting & IT services. Focus on communication and tech skills.",package:"₹4.5–8 LPA",slots:200},
+  Cognizant:{name:"Cognizant Technology",logo:"CTS",color:"#1a6eb5",accent:"#00a0e0",difficulty:"Easy-Medium",difBadge:"badge-gn",rounds:["Aptitude","Technical","HR"],desc:"Global IT services leader. Strong aptitude and basic technical knowledge needed.",package:"₹4–7 LPA",slots:250},
+  HCL:{name:"HCL Technologies",logo:"HCL",color:"#0077C8",accent:"#00b4f0",difficulty:"Easy-Medium",difBadge:"badge-gn",rounds:["Aptitude","Technical","HR"],desc:"India's 4th largest IT company. Focus on problem solving, teamwork and communication.",package:"₹3.5–6 LPA",slots:380},
+  Capgemini:{name:"Capgemini India",logo:"CAP",color:"#0070AD",accent:"#12ABDB",difficulty:"Medium",difBadge:"badge-gd",rounds:["Aptitude","Technical","Coding","HR"],desc:"French MNC with massive India operations. Values analytical thinking and adaptability.",package:"₹4–7.5 LPA",slots:300},
+  IBM:{name:"IBM India",logo:"IBM",color:"#1F70C1",accent:"#4589ff",difficulty:"Medium-Hard",difBadge:"badge-or",rounds:["Aptitude","Technical","HR"],desc:"Global technology & consulting giant. Focus on cloud, AI and enterprise software.",package:"₹5–10 LPA",slots:150},
+  LTI:{name:"LTIMindtree",logo:"LTI",color:"#E63312",accent:"#f97316",difficulty:"Medium",difBadge:"badge-gd",rounds:["Aptitude","Technical","Coding","HR"],desc:"Fast-growing IT company, merged entity of L&T Infotech and Mindtree. Strong DSA focus.",package:"₹4.5–9 LPA",slots:180}
+};
+
+const COMPANY_QUESTIONS = {
+  TCS:[
+    {cat:"Aptitude",q:"If 6 workers can do a job in 10 days, how many workers needed in 3 days?",a:"20 workers. 6×10 = W×3 → W = 20.",diff:"Easy"},
+    {cat:"Aptitude",q:"A train 250m long passes a pole in 10 seconds. Speed?",a:"25 m/s = 90 km/h. Speed = distance/time = 250/10.",diff:"Easy"},
+    {cat:"Technical",q:"What is the difference between TCP and UDP?",a:"TCP is connection-oriented, reliable. UDP is connectionless, faster but unreliable.",diff:"Medium"},
+    {cat:"Technical",q:"Explain ACID properties in databases.",a:"Atomicity, Consistency, Isolation, Durability — ensures reliable DB transactions.",diff:"Medium"},
+    {cat:"Technical",q:"What is a deadlock? How is it prevented?",a:"Deadlock = processes waiting for each other indefinitely. Prevent via ordering, timeout, banker's algorithm.",diff:"Hard"},
+    {cat:"Coding",q:"Find the second largest element in an array.",a:"Traverse once keeping track of max and second max. O(n) time, O(1) space.",diff:"Medium"},
+    {cat:"Coding",q:"Detect a cycle in a linked list.",a:"Floyd's cycle detection (slow/fast pointer). If they meet, cycle exists.",diff:"Medium"},
+    {cat:"HR",q:"Why do you want to join TCS?",a:"Highlight TCS's scale, global exposure, TCS iON, Digital programs.",diff:"Easy"},
+    {cat:"HR",q:"Where do you see yourself in 5 years?",a:"Talk about skill growth, leadership aspirations aligned with TCS.",diff:"Easy"}
+  ],
+  Infosys:[
+    {cat:"Aptitude",q:"Clock shows 3:00. Angle between hour and minute hand?",a:"90 degrees.",diff:"Easy"},
+    {cat:"Aptitude",q:"Two pipes fill a tank in 12 and 15 hours together?",a:"20/3 ≈ 6.67 hours. 1/12 + 1/15 = 9/60 = 3/20.",diff:"Medium"},
+    {cat:"Technical",q:"Abstract class vs interface in Java?",a:"Abstract class can have method implementations; interface only abstract methods (pre-Java 8).",diff:"Medium"},
+    {cat:"Technical",q:"Explain database normalization.",a:"1NF (atomic values), 2NF (no partial dependency), 3NF (no transitive dependency).",diff:"Medium"},
+    {cat:"Coding",q:"Check if a string is a pangram.",a:"A pangram contains every alphabet letter. Check set(s.lower()) covers a–z.",diff:"Easy"},
+    {cat:"Coding",q:"Implement a stack using queues.",a:"Two queues — push to Q1, for pop dequeue all to Q2 except last element.",diff:"Hard"},
+    {cat:"HR",q:"Describe a time you faced team conflict.",a:"Use STAR method. Emphasize communication, compromise, positive outcome.",diff:"Easy"}
+  ],
+  Wipro:[
+    {cat:"Aptitude",q:"What percentage of 450 is 90?",a:"20%. (90/450)×100.",diff:"Easy"},
+    {cat:"Aptitude",q:"Next in series: 2, 6, 12, 20, 30, ?",a:"42. Pattern: n(n+1). Differences: 4,6,8,10,12.",diff:"Medium"},
+    {cat:"Technical",q:"What is polymorphism?",a:"One interface, multiple implementations. Overloading (compile-time) and overriding (runtime).",diff:"Medium"},
+    {cat:"Technical",q:"What is a RESTful API?",a:"REST uses HTTP methods (GET, POST, PUT, DELETE) on resources identified by URLs.",diff:"Medium"},
+    {cat:"Coding",q:"Reverse a linked list.",a:"Keep prev, curr, next pointers. At each step: next=curr.next, curr.next=prev, prev=curr.",diff:"Medium"},
+    {cat:"HR",q:"Strengths and weaknesses?",a:"Give specific strength with example; weakness + what you're doing to improve.",diff:"Easy"}
+  ],
+  Zoho:[
+    {cat:"Aptitude",q:"A and B complete work in 20 and 30 days. Together?",a:"12 days. 1/20 + 1/30 = 5/60 = 1/12.",diff:"Easy"},
+    {cat:"Technical",q:"Process vs Thread?",a:"Process: independent memory. Thread: lightweight, shares memory within a process.",diff:"Medium"},
+    {cat:"Technical",q:"Binary search tree properties?",a:"left < root < right. Operations: O(log n) average, O(n) worst.",diff:"Medium"},
+    {cat:"Coding",q:"All permutations of a string.",a:"Recursive backtracking: fix first char, permute rest. Heap's algorithm for efficiency.",diff:"Hard"},
+    {cat:"Coding",q:"Implement LRU Cache.",a:"HashMap + Doubly Linked List. O(1) get/put. Move accessed node to front.",diff:"Hard"},
+    {cat:"Coding",q:"Two numbers summing to a target.",a:"HashSet: for each num check if (target-num) in set. O(n) time, O(n) space.",diff:"Medium"},
+    {cat:"HR",q:"Why Zoho over service-based companies?",a:"Product culture, ownership, building real products, technical depth, innovation.",diff:"Easy"}
+  ],
+  Amazon:[
+    {cat:"Technical",q:"What is the Leadership Principle 'Customer Obsession'?",a:"Start from customer and work backwards. Prioritize long-term customer trust over short-term profit.",diff:"Easy"},
+    {cat:"Technical",q:"Explain CAP theorem.",a:"Consistency, Availability, Partition Tolerance — distributed systems can guarantee only 2 of 3.",diff:"Hard"},
+    {cat:"Technical",q:"What is eventual consistency?",a:"System will eventually converge to a consistent state after writes stop. Used in DynamoDB, S3.",diff:"Hard"},
+    {cat:"Coding",q:"Find the kth largest element in an array.",a:"Use a min-heap of size k. Iterate array — if element > heap.top(), replace. O(n log k).",diff:"Hard"},
+    {cat:"Coding",q:"Merge K sorted linked lists.",a:"Use a min-heap of size K. Extract min, push next node. O(n log k) time.",diff:"Hard"},
+    {cat:"Coding",q:"LRU Cache implementation.",a:"OrderedDict in Python or HashMap + DLL. O(1) get/put operations.",diff:"Hard"},
+    {cat:"HR",q:"Tell me about a time you failed.",a:"Use STAR. Be honest, explain what you learned and how you improved.",diff:"Easy"},
+    {cat:"HR",q:"Describe a time you took ownership.",a:"Highlight an instance where you went beyond your role to solve a problem.",diff:"Easy"}
+  ],
+  Microsoft:[
+    {cat:"Technical",q:"Difference between process and thread in OS?",a:"Process: independent execution unit with own memory. Thread: lightweight, shares process memory. Context switch faster for threads.",diff:"Medium"},
+    {cat:"Technical",q:"What is virtual memory?",a:"Extends RAM using disk space via paging/swapping. Allows programs larger than physical RAM.",diff:"Medium"},
+    {cat:"Technical",q:"Explain object-oriented design principles (SOLID).",a:"Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion.",diff:"Hard"},
+    {cat:"Coding",q:"Serialize and deserialize a binary tree.",a:"BFS or DFS traversal with null markers. Reconstruct using queue from serialized string.",diff:"Hard"},
+    {cat:"Coding",q:"Find all paths in a matrix from top-left to bottom-right.",a:"DFS/backtracking with directions right and down. Track path array.",diff:"Hard"},
+    {cat:"Coding",q:"Longest common subsequence.",a:"2D DP table. dp[i][j] = dp[i-1][j-1]+1 if match, else max(dp[i-1][j], dp[i][j-1]).",diff:"Hard"},
+    {cat:"HR",q:"Why Microsoft?",a:"Mission (empower every person), culture of growth mindset, Azure + AI innovation.",diff:"Easy"}
+  ],
+  Accenture:[
+    {cat:"Aptitude",q:"If A is 2 years older than B and B is 3 years older than C, and C is 20, how old is A?",a:"25. C=20, B=23, A=25.",diff:"Easy"},
+    {cat:"Aptitude",q:"A cube of side 4 cm is painted. Cut into 1cm cubes. How many have exactly 1 face painted?",a:"24 cubes (6 faces × 4 cubes per face center).",diff:"Medium"},
+    {cat:"Technical",q:"What is cloud computing? Name 3 types.",a:"Delivering computing services via internet. Types: IaaS (EC2), PaaS (Heroku), SaaS (Gmail).",diff:"Easy"},
+    {cat:"Technical",q:"What is Agile methodology?",a:"Iterative development in sprints. Key values: working software, customer collaboration, responding to change.",diff:"Easy"},
+    {cat:"Coding",q:"Count vowels and consonants in a string.",a:"Loop through string, check if each character is in 'aeiou' for vowels, else consonant.",diff:"Easy"},
+    {cat:"HR",q:"Why Accenture?",a:"Emphasize scale, exposure to global clients, technology + consulting combination, learning culture.",diff:"Easy"}
+  ],
+  Cognizant:[
+    {cat:"Aptitude",q:"Find the missing number: 3, 7, 13, 21, 31, ?",a:"43. Differences: 4, 6, 8, 10, 12 (increasing by 2).",diff:"Easy"},
+    {cat:"Aptitude",q:"A shopkeeper buys at ₹200, sells at ₹250. Profit %?",a:"25%. Profit = 50, % = (50/200)×100.",diff:"Easy"},
+    {cat:"Technical",q:"What is the difference between GET and POST?",a:"GET retrieves data (params in URL), POST sends data (params in body). GET is idempotent.",diff:"Easy"},
+    {cat:"Technical",q:"What is normalization? Why is it important?",a:"Reduces data redundancy and improves integrity. 1NF, 2NF, 3NF, BCNF.",diff:"Medium"},
+    {cat:"Coding",q:"Find duplicates in an array.",a:"Use HashSet: traverse array, if element exists in set it's a duplicate. O(n) time.",diff:"Easy"},
+    {cat:"Coding",q:"Fibonacci using memoization.",a:"Store computed values in a dictionary/array. fib(n) = fib(n-1)+fib(n-2), fib(0)=0, fib(1)=1.",diff:"Medium"},
+    {cat:"HR",q:"Introduce yourself.",a:"Cover background, education, skills, projects, and why you chose Cognizant.",diff:"Easy"}
+  ],
+  HCL:[
+    {cat:"Aptitude",q:"A sum of ₹12,000 is invested at 10% per annum simple interest for 3 years. What is the amount?",a:"₹15,600. SI = 12000×10×3/100 = ₹3600. Amount = 12000+3600.",diff:"Easy"},
+    {cat:"Aptitude",q:"In a class, 40% are girls. If there are 24 girls, how many boys are there?",a:"36 boys. 24 = 40% of total → total = 60. Boys = 60 - 24 = 36.",diff:"Easy"},
+    {cat:"Aptitude",q:"Find the next term: 1, 4, 9, 16, 25, ?",a:"36. The series is n². 6² = 36.",diff:"Easy"},
+    {cat:"Technical",q:"What is OOPS? Name the four pillars.",a:"Object-Oriented Programming. Pillars: Encapsulation, Inheritance, Polymorphism, Abstraction.",diff:"Easy"},
+    {cat:"Technical",q:"What is a pointer in C? Give an example.",a:"A pointer stores the memory address of another variable. Example: int *p = &x; stores address of x.",diff:"Medium"},
+    {cat:"Technical",q:"Difference between compiler and interpreter?",a:"Compiler translates entire code at once (C, Java). Interpreter translates line by line (Python, JS).",diff:"Easy"},
+    {cat:"Coding",q:"Write a program to count occurrences of each character in a string.",a:"Use a HashMap/dictionary. Iterate string, increment count for each character.",diff:"Easy"},
+    {cat:"HR",q:"Why HCL?",a:"Highlight HCL's product engineering focus, global scale, learning opportunities, and SuperGeek program.",diff:"Easy"},
+    {cat:"HR",q:"Are you comfortable with relocation?",a:"Be positive. Mention flexibility and willingness to adapt to new environments.",diff:"Easy"}
+  ],
+  Capgemini:[
+    {cat:"Aptitude",q:"If 8 men can build a wall in 12 days, how many men are needed to build it in 6 days?",a:"16 men. 8×12 = M×6 → M = 16.",diff:"Easy"},
+    {cat:"Aptitude",q:"A car travels 120 km at 60 km/h and returns at 40 km/h. Average speed for whole journey?",a:"48 km/h. Total distance = 240 km. Total time = 2+3 = 5 hrs. Avg = 240/5.",diff:"Medium"},
+    {cat:"Aptitude",q:"The ratio of milk to water is 3:2 in 20 liters. How much water to add to make it 3:4?",a:"8 liters. Milk = 12L, Water = 8L. For 3:4, water needed = 16L. Add 16-8 = 8L.",diff:"Medium"},
+    {cat:"Technical",q:"What is cloud computing? Explain IaaS, PaaS, SaaS.",a:"Delivering computing via internet. IaaS: raw infrastructure (AWS EC2). PaaS: development platform (Heroku). SaaS: ready software (Gmail).",diff:"Easy"},
+    {cat:"Technical",q:"What is a microservice architecture?",a:"Application built as small independent services communicating via APIs. Each service has its own DB and can be deployed independently.",diff:"Medium"},
+    {cat:"Technical",q:"Explain SDLC phases.",a:"Software Development Life Cycle: Planning → Analysis → Design → Implementation → Testing → Deployment → Maintenance.",diff:"Easy"},
+    {cat:"Coding",q:"Check if a number is prime.",a:"Iterate from 2 to sqrt(n). If any number divides evenly, not prime. O(sqrt n) time.",diff:"Easy"},
+    {cat:"Coding",q:"Find the maximum subarray sum (Kadane's Algorithm).",a:"Track current_max and global_max. For each element: current_max = max(num, current_max+num). O(n) time.",diff:"Medium"},
+    {cat:"HR",q:"What are your salary expectations?",a:"Research market rate, give a range based on skills and experience, express flexibility.",diff:"Easy"},
+    {cat:"HR",q:"Why Capgemini?",a:"Emphasize Capgemini's global presence, tech + consulting, innovation labs and learning culture.",diff:"Easy"}
+  ],
+  IBM:[
+    {cat:"Aptitude",q:"If 30% of a number is 90, what is 50% of that number?",a:"150. 30% of N = 90 → N = 300. 50% of 300 = 150.",diff:"Easy"},
+    {cat:"Aptitude",q:"A boat travels 20 km upstream in 4 hours and 20 km downstream in 2 hours. Speed of boat in still water?",a:"7.5 km/h. Upstream = 5 km/h, Downstream = 10 km/h. Still water = (5+10)/2 = 7.5.",diff:"Medium"},
+    {cat:"Technical",q:"What is Blockchain? How does it work?",a:"Decentralized distributed ledger where data is stored in blocks linked chronologically using cryptography. Immutable and transparent.",diff:"Medium"},
+    {cat:"Technical",q:"What is the difference between SQL and NoSQL?",a:"SQL: structured, relational, ACID compliant (MySQL, PostgreSQL). NoSQL: flexible schema, scalable, eventual consistency (MongoDB, Cassandra).",diff:"Medium"},
+    {cat:"Technical",q:"Explain DevOps and its key principles.",a:"DevOps bridges dev and ops teams. Key principles: CI/CD, automation, collaboration, monitoring, infrastructure as code.",diff:"Medium"},
+    {cat:"Technical",q:"What is containerization? Docker vs VM?",a:"Containers package app + dependencies without full OS. Docker: lightweight, shared OS kernel. VM: heavy, full OS per instance.",diff:"Medium"},
+    {cat:"Coding",q:"Implement binary search.",a:"Compare middle element with target. If equal: found. If less: search right half. If more: search left half. O(log n).",diff:"Easy"},
+    {cat:"Coding",q:"Find all subsets of a set.",a:"Power set has 2^n subsets. Use bit masking or recursive backtracking. For n elements, generate all 2^n combinations.",diff:"Hard"},
+    {cat:"HR",q:"Why IBM?",a:"Mention IBM's innovation legacy, AI/cloud focus (Watson, IBM Cloud), research culture, and consulting expertise.",diff:"Easy"},
+    {cat:"HR",q:"Describe a situation where you showed initiative.",a:"Use STAR method. Describe a problem you spotted independently and the steps you took to solve it.",diff:"Easy"}
+  ],
+  LTI:[
+    {cat:"Aptitude",q:"In how many ways can 5 people sit in a row?",a:"120 ways. 5! = 5×4×3×2×1 = 120.",diff:"Easy"},
+    {cat:"Aptitude",q:"If the cost price is ₹1500 and loss is 10%, what is selling price?",a:"₹1350. SP = CP × (1 - loss%) = 1500 × 0.9 = 1350.",diff:"Easy"},
+    {cat:"Technical",q:"What is REST vs SOAP?",a:"REST: lightweight, uses HTTP, JSON/XML, stateless. SOAP: protocol-heavy, XML only, built-in security. REST is preferred for modern web APIs.",diff:"Medium"},
+    {cat:"Technical",q:"What is a design pattern? Name three.",a:"Reusable solution to common software problems. Examples: Singleton (single instance), Factory (object creation), Observer (event handling).",diff:"Medium"},
+    {cat:"Technical",q:"What is JVM and how does Java achieve platform independence?",a:"JVM (Java Virtual Machine) interprets bytecode. Java compiles to .class bytecode, run on any platform with JVM. WORA: Write Once Run Anywhere.",diff:"Medium"},
+    {cat:"Coding",q:"Detect if a linked list is a palindrome.",a:"Find middle using slow/fast pointers, reverse second half, compare both halves. Restore list. O(n) time, O(1) space.",diff:"Hard"},
+    {cat:"Coding",q:"Find the longest increasing subsequence.",a:"Use DP: dp[i] = length of LIS ending at index i. For each j<i, if arr[j]<arr[i]: dp[i] = max(dp[i], dp[j]+1). O(n²) or O(n log n).",diff:"Hard"},
+    {cat:"Coding",q:"Implement a queue using two stacks.",a:"Stack1 for enqueue. For dequeue: if Stack2 empty, pop all from Stack1 to Stack2, then pop from Stack2.",diff:"Medium"},
+    {cat:"HR",q:"Why LTIMindtree?",a:"Highlight the merged entity's combined strength, product + service mix, Mindtree's innovation + LTI's engineering depth.",diff:"Easy"},
+    {cat:"HR",q:"How do you handle tight deadlines?",a:"Prioritize tasks, communicate proactively, break work into milestones, avoid perfectionism for non-critical items.",diff:"Easy"}
+  ]
+};
+
+const QBANK = {
+  Aptitude:[
+    {id:1,text:"A train travels 360 km in 4 hours. Speed in m/s?",opts:["20 m/s","25 m/s","22.5 m/s","30 m/s"],ans:1,exp:"90 km/h = 90×1000/3600 = 25 m/s"},
+    {id:2,text:"15 workers complete a job in 12 days. 20 workers take?",opts:["8 days","9 days","10 days","11 days"],ans:1,exp:"15×12 = 20×d → d = 9"},
+    {id:3,text:"Pipe fills tank in 6 hrs, another empties in 8 hrs. Both open: fill time?",opts:["20 hrs","24 hrs","18 hrs","30 hrs"],ans:1,exp:"Net = 1/6 − 1/8 = 1/24 → 24 hours"},
+    {id:4,text:"Odd one out: 2, 5, 10, 17, 26, 37, 50, 64",opts:["37","50","64","26"],ans:2,exp:"Series is n²+1. 8²+1=65, not 64"},
+    {id:5,text:"Simple interest on ₹8000 for 3 years at 5% p.a.?",opts:["₹1000","₹1200","₹1500","₹800"],ans:1,exp:"SI = 8000×5×3/100 = ₹1200"},
+    {id:6,text:"Sell at 20% profit. Cost ₹500. SP is?",opts:["₹550","₹600","₹580","₹620"],ans:1,exp:"SP = 500 + 100 = ₹600"},
+    {id:7,text:"Two numbers ratio 3:5, LCM 75. Sum?",opts:["32","40","45","50"],ans:1,exp:"15+25 = 40"},
+    {id:8,text:"987×987 + 987×13 + 13×13 = ?",opts:["990000","1000000","980100","990100"],ans:1,exp:"(987+13)² = 1,000,000"},
+    {id:9,text:"Avg of 5 numbers = 20. Remove one, avg = 18. Removed?",opts:["28","26","30","24"],ans:0,exp:"100 − 72 = 28"},
+    {id:10,text:"Car covers 1/4 at 40 km/h, rest at 60 km/h. Avg speed?",opts:["48 km/h","50 km/h","52 km/h","54 km/h"],ans:1,exp:"Weighted harmonic ≈ 50 km/h"}
+  ],
+  Technical:[
+    {id:1,text:"Which data structure uses LIFO?",opts:["Queue","Stack","Linked List","Tree"],ans:1,exp:"Stack: Last In, First Out"},
+    {id:2,text:"Time complexity of Binary Search?",opts:["O(n)","O(log n)","O(n²)","O(1)"],ans:1,exp:"Halves space each step"},
+    {id:3,text:"SQL command to retrieve data?",opts:["INSERT","UPDATE","SELECT","DELETE"],ans:2,exp:"SELECT queries data"},
+    {id:4,text:"Encapsulation in OOP means?",opts:["Inheriting","Binding data & methods","Overriding","Creating objects"],ans:1,exp:"Bundles data with methods"},
+    {id:5,text:"HTTP stands for?",opts:["HyperText Transfer Protocol","High Transfer Text","HyperText Transform","None"],ans:0,exp:"HyperText Transfer Protocol"},
+    {id:6,text:"O(n log n) worst-case sort?",opts:["Bubble Sort","Quick Sort","Merge Sort","Insertion Sort"],ans:2,exp:"Merge Sort is always O(n log n)"},
+    {id:7,text:"Foreign key in databases?",opts:["Primary key same table","References PK of another table","Index key","Unique key"],ans:1,exp:"Establishes table relationships"},
+    {id:8,text:"CSS stands for?",opts:["Computer Style Sheets","Cascading Style Sheets","Creative Style Sheets","Colorful Style Sheets"],ans:1,exp:"Cascading Style Sheets"},
+    {id:9,text:"NOT a JavaScript data type?",opts:["String","Boolean","Character","Undefined"],ans:2,exp:"JavaScript has no 'Character'"},
+    {id:10,text:"Polymorphism means?",opts:["Single form","Multiple forms","No form","Abstract form"],ans:1,exp:"Poly=many, morph=forms"}
+  ],
+  Coding:[
+    {id:1,text:"Write a function to reverse a string.",lang:"javascript",starter:`function reverseString(str) {\n  // Your solution here\n  \n}\nconsole.log(reverseString("hello")); // "olleh"`,hint:"Use .split('').reverse().join('')"},
+    {id:2,text:"Write a function for factorial of n (handle n=0).",lang:"javascript",starter:`function factorial(n) {\n  // Your solution here\n  \n}\nconsole.log(factorial(5)); // 120\nconsole.log(factorial(0)); // 1`,hint:"Recursion: n * factorial(n-1), base case n<=1 returns 1"},
+    {id:3,text:"Check if a string is a palindrome.",lang:"javascript",starter:`function isPalindrome(str) {\n  // Your solution here\n  \n}\nconsole.log(isPalindrome("racecar")); // true\nconsole.log(isPalindrome("hello")); // false`,hint:"Compare string with its reverse"}
+  ],
+  HR:[
+    {id:1,text:"Tell me about yourself and your college journey.",placeholder:"Describe your background, skills, projects, and goals..."},
+    {id:2,text:"Where do you see yourself in 5 years?",placeholder:"Describe career aspirations and professional growth..."},
+    {id:3,text:"Why do you want to join this company?",placeholder:"Mention reasons aligned with company values and products..."},
+    {id:4,text:"Describe a challenging situation you overcame.",placeholder:"Use STAR method: Situation, Task, Action, Result..."},
+    {id:5,text:"Greatest strengths and weaknesses?",placeholder:"Be honest, back strengths with examples..."}
+  ]
+};
+
+const EXAM_META = {
+  Aptitude:{duration:30*60,label:"30 mins · 10 MCQs"},
+  Technical:{duration:45*60,label:"45 mins · 10 MCQs"},
+  Coding:{duration:60*60,label:"60 mins · 3 Problems"},
+  HR:{duration:20*60,label:"20 mins · 5 Questions"}
+};
+
+const DEFAULT_EXPERIENCES = [
+  {name:"Rahul Verma",company:"TCS",role:"Software Engineer",package:"6.5 LPA",avatar:"R",quote:"PlacementPro's aptitude section was spot-on with TCS questions. I practiced 3-4 tests daily and cracked it in the first attempt!",tips:["Focus on time management in aptitude","Practice verbal reasoning daily","TCS values communication skills in HR"],placed:"December 2024"},
+  {name:"Priya Nair",company:"Infosys",role:"Systems Engineer",package:"4.2 LPA",avatar:"P",quote:"The technical question bank was incredibly helpful. I reviewed all DBMS and OOP concepts through the platform.",tips:["DBMS normalization is frequently asked","Know your resume projects","Infosys HR is very detailed — prepare STAR stories"],placed:"January 2025"},
+  {name:"Aman Singh",company:"Zoho",role:"Software Developer",package:"8 LPA",avatar:"A",quote:"Zoho had 5 technical rounds. PlacementPro's coding section helped me think algorithmically.",tips:["Data structures are heavily tested","Write clean readable code","Zoho values problem-solving over bookish knowledge"],placed:"November 2024"},
+  {name:"Sneha Reddy",company:"Wipro",role:"Project Engineer",package:"3.8 LPA",avatar:"S",quote:"Wipro's process was streamlined. I used PlacementPro for aptitude prep and the HR question bank was super helpful.",tips:["Wipro focuses on verbal ability","Be confident in HR round","Know basics of cloud and agile"],placed:"February 2025"},
+  {name:"Karthik M",company:"Amazon",role:"SDE-1",package:"18 LPA",avatar:"K",quote:"Amazon's OA had hard DSA problems. PlacementPro's coding section prepared me well, and I solved 100+ LeetCode alongside.",tips:["Strong DSA is non-negotiable for Amazon","Study leadership principles deeply","System design basics matter in final rounds"],placed:"March 2025"},
+  {name:"Divya Sharma",company:"Accenture",role:"Associate SE",package:"5.5 LPA",avatar:"D",quote:"Accenture's process was smooth. The aptitude and communication rounds were well-covered in PlacementPro.",tips:["Focus on communication skills","Accenture values teamwork stories","Basic cloud knowledge is a plus"],placed:"February 2025"}
+];
+
+// ═══════════════════════════════════════
+// API CONFIG  &  STORAGE HELPERS
+// ═══════════════════════════════════════
+
+// ▸ Change this if your XAMPP folder name is different
+const API_BASE = 'http://localhost/placementpro/api';
+
+// ── Token helpers (localStorage only stores the session token) ─
+function getToken(){ return localStorage.getItem('pp_token'); }
+function setToken(t){ localStorage.setItem('pp_token', t); }
+function clearToken(){ localStorage.removeItem('pp_token'); }
+
+// ── Generic API call ──────────────────────────────────────────
+async function api(endpoint, options = {}) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['X-Token'] = token;
+  try {
+    const res = await fetch(API_BASE + endpoint, {
+      headers,
+      ...options,
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return { success: false, message: 'Network error: ' + e.message };
+  }
+}
+
+// ── Experience helpers (kept local for simplicity) ────────────
+function getExperiences(){return JSON.parse(localStorage.getItem('pp_experiences')||JSON.stringify(DEFAULT_EXPERIENCES));}
+function saveExperiences(e){localStorage.setItem('pp_experiences',JSON.stringify(e));}
+
+// ── Stub kept so existing render calls don't break ────────────
+function refreshCurrentUser(){ /* currentUser already in memory */ }
+function initStorage(){
+  if(!localStorage.getItem('pp_experiences')) saveExperiences(DEFAULT_EXPERIENCES);
+}
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentUser=null,authMode='login',authPortal='student',activeView='',examState={},examTimer=null,qbankActiveTab='Aptitude',coQActiveTab='TCS';
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');const el=document.createElement('div');
+  el.className=`toast-item toast-${type}`;el.innerHTML=(type==='success'?'✅ ':'❌ ')+msg;
+  t.appendChild(el);setTimeout(()=>el.remove(),3500);
+}
+
+// ═══════════════════════════════════════
+// EXPERIENCES
+// ═══════════════════════════════════════
+function renderExperiences(){
+  const exps=getExperiences();
+  const coMap={TCS:'tcs',Infosys:'infosys',Wipro:'wipro',Zoho:'zoho',Amazon:'amazon',Microsoft:'microsoft',Accenture:'accenture',Cognizant:'cognizant'};
+  document.getElementById('experiences-container').innerHTML=exps.map(e=>`
+    <div class="exp-card ${coMap[e.company]||''}">
+      <div class="row" style="gap:10px;margin-bottom:4px">
+        <div class="exp-avatar">${e.avatar||e.name[0]}</div>
+        <div><div style="font-weight:700;font-size:14px">${e.name}</div><div class="exp-meta">${e.role} · ${e.company} · ${e.placed||'2025'}</div></div>
+        <span class="badge badge-gn" style="font-size:10px;margin-left:auto">✓ Placed</span>
+      </div>
+      <div style="margin-bottom:10px"><span class="badge badge-gd" style="font-size:11px">${e.package}</span></div>
+      <div class="exp-quote">"${e.quote}"</div>
+      <div style="font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:.5px;margin-bottom:7px">KEY TIPS</div>
+      ${(e.tips||[]).map(t=>`<div class="exp-tip">${t}</div>`).join('')}
+    </div>`).join('');
+}
+function openShareModal(){
+  if(!currentUser||currentUser.role!=='student'){toast('Login as a student to share experience','error');return;}
+  document.getElementById('share-modal').classList.remove('hidden');
+}
+function closeShareModal(){document.getElementById('share-modal').classList.add('hidden')}
+function submitExperience(){
+  const co=document.getElementById('share-company').value;
+  const role=document.getElementById('share-role').value.trim();
+  const exp=document.getElementById('share-experience').value.trim();
+  const tips=document.getElementById('share-tips').value.trim();
+  const pkg=document.getElementById('share-package').value.trim();
+  if(!role||!exp){toast('Please fill required fields','error');return;}
+  const exps=getExperiences();
+  exps.unshift({name:currentUser.name,company:co,role,package:pkg||'N/A',avatar:currentUser.name[0],quote:exp,tips:tips?tips.split('\n').filter(Boolean):[],placed:new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'})});
+  saveExperiences(exps);renderExperiences();closeShareModal();toast('Experience shared!');
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function showPortalSelector(){document.getElementById('portal-modal').classList.remove('hidden')}
+function closePortal(){document.getElementById('portal-modal').classList.add('hidden')}
+function openAuth(type){
+  closePortal();
+  authPortal=type.includes('student')?'student':type.includes('admin')?'admin':'holder';
+  authMode=type.includes('register')?'register':'login';
+  document.getElementById('auth-modal').classList.remove('hidden');
+  updateAuthUI();
+  document.getElementById('auth-email').value='';
+  document.getElementById('auth-pass').value='';
+  hideAuthError();
+}
+function closeAuth(){document.getElementById('auth-modal').classList.add('hidden')}
+function toggleAuthMode(){authMode=authMode==='login'?'register':'login';updateAuthUI();hideAuthError();}
+
+function updateAuthUI(){
+  const isReg=authMode==='register';
+  const colors={student:'var(--pu2)',admin:'var(--gn)',holder:'var(--gd)'};
+  const labels={student:'Student Portal',admin:'Admin Portal',holder:'Website Holder Portal'};
+  const hints={student:'Demo → arjun@student.com / student123',admin:'Demo → admin@placementpro.com / admin123',holder:'Demo → holder@placementpro.com / holder123'};
+
+  document.getElementById('auth-portal-badge').innerHTML=`<span class="badge" style="background:${colors[authPortal]}22;color:${colors[authPortal]};border:1px solid ${colors[authPortal]}44">${labels[authPortal]}</span>`;
+
+  if(authPortal==='student'){
+    document.getElementById('auth-title').textContent=isReg?'Create Student Account':'Student Login';
+    document.getElementById('auth-sub').textContent=isReg?'Join PlacementPro today':'Sign in to continue your prep';
+    document.getElementById('auth-submit-btn').textContent=isReg?'Create Account':'Sign In';
+    document.getElementById('auth-register-fields').classList.toggle('hidden',!isReg);
+    document.getElementById('auth-admin-reg-fields').classList.add('hidden');
+    document.getElementById('auth-register-toggle').classList.remove('hidden');
+    document.getElementById('auth-switch-text').textContent=isReg?'Already have an account?':"Don't have an account?";
+    document.getElementById('auth-switch-btn').textContent=isReg?'Sign in':'Register';
+    document.getElementById('auth-hint').textContent=!isReg?hints.student:'';
+    document.getElementById('auth-hint').style.display=!isReg?'block':'none';
+  } else if(authPortal==='admin'){
+    document.getElementById('auth-title').textContent=isReg?'Create Admin Account':'Admin Login';
+    document.getElementById('auth-sub').textContent=isReg?'Register as a new admin':'Sign in to manage your portal';
+    document.getElementById('auth-submit-btn').textContent=isReg?'Create Admin Account':'Sign In';
+    document.getElementById('auth-register-fields').classList.add('hidden');
+    document.getElementById('auth-admin-reg-fields').classList.toggle('hidden',!isReg);
+    document.getElementById('auth-register-toggle').classList.remove('hidden');
+    document.getElementById('auth-switch-text').textContent=isReg?'Already have an account?':"New admin? Register here.";
+    document.getElementById('auth-switch-btn').textContent=isReg?'Sign in':'Register';
+    document.getElementById('auth-hint').textContent=!isReg?hints.admin:'';
+    document.getElementById('auth-hint').style.display=!isReg?'block':'none';
+  } else {
+    document.getElementById('auth-title').textContent='Website Holder Login';
+    document.getElementById('auth-sub').textContent='Owner access — sign in to manage the platform';
+    document.getElementById('auth-submit-btn').textContent='Sign In';
+    document.getElementById('auth-register-fields').classList.add('hidden');
+    document.getElementById('auth-admin-reg-fields').classList.add('hidden');
+    document.getElementById('auth-register-toggle').classList.add('hidden');
+    document.getElementById('auth-hint').textContent=hints.holder;
+    document.getElementById('auth-hint').style.display='block';
+  }
+}
+
+function showAuthError(msg){const el=document.getElementById('auth-error');el.textContent='⚠ '+msg;el.classList.remove('hidden')}
+function hideAuthError(){document.getElementById('auth-error').classList.add('hidden')}
+
+async function submitAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  hideAuthError();
+  if(!email||!pass){showAuthError('Please fill all required fields');return;}
+
+  const btn=document.getElementById('auth-submit-btn');
+  btn.disabled=true; btn.textContent='Please wait...';
+
+  if(authMode==='login'){
+    const res = await api('/login.php', {
+      method:'POST',
+      body: { email, password: pass, portal: authPortal }
+    });
+    btn.disabled=false; updateAuthUI();
+    if(!res.success){ showAuthError(res.message||'Invalid email or password'); return; }
+    // Normalise field names (backend uses snake_case)
+    const u = res.user;
+    u.rollNo  = u.roll_no || u.rollNo || '';
+    u.completedRounds = u.completedRounds || {};
+    u.scores  = u.scores || {};
+    setToken(res.token);
+    loginUser(u);
+
+  } else if(authMode==='register'){
+    if(authPortal==='student'){
+      const name=document.getElementById('reg-name').value.trim();
+      const roll=document.getElementById('reg-roll').value.trim();
+      const branch=document.getElementById('reg-branch').value.trim()||'Computer Science';
+      const cgpa=parseFloat(document.getElementById('reg-cgpa').value)||0;
+      if(!name||!roll){btn.disabled=false;updateAuthUI();showAuthError('Please fill all required fields');return;}
+      const res = await api('/register.php', {
+        method:'POST',
+        body: { name, email, password: pass, roll_no: roll, branch, cgpa }
+      });
+      btn.disabled=false; updateAuthUI();
+      if(!res.success){ showAuthError(res.message||'Registration failed'); return; }
+      const u = res.user;
+      u.rollNo = u.roll_no || u.rollNo || roll;
+      u.completedRounds = {}; u.scores = {};
+      setToken(res.token);
+      loginUser(u);
+
+    } else if(authPortal==='admin'){
+      const name=document.getElementById('admin-reg-name').value.trim();
+      const dept=document.getElementById('admin-reg-dept').value.trim()||'Training & Placement';
+      const college=document.getElementById('admin-reg-college').value.trim()||'';
+      if(!name){btn.disabled=false;updateAuthUI();showAuthError('Please enter your name');return;}
+      if(pass.length<6){btn.disabled=false;updateAuthUI();showAuthError('Password must be at least 6 characters');return;}
+      const res = await api('/register.php', {
+        method:'POST',
+        body: { name, email, password: pass, roll_no:'ADM'+Date.now().toString().slice(-4), branch:'Administration', dept, college, role:'admin' }
+      });
+      btn.disabled=false; updateAuthUI();
+      if(!res.success){ showAuthError(res.message||'Registration failed'); return; }
+      const u = res.user;
+      u.rollNo = u.roll_no || u.rollNo || '';
+      u.completedRounds = {}; u.scores = {};
+      setToken(res.token);
+      loginUser(u);
+    }
+  }
+}
+
+function loginUser(user){
+  currentUser=user; closeAuth();
+  document.getElementById('landing').classList.add('hidden');
+  showApp(user);
+  if(user.role==='student') document.getElementById('share-exp-btn').style.display='inline-flex';
+  toast(`Welcome back, ${user.name.split(' ')[0]}!`);
+}
+async function logout(){
+  await api('/logout.php', {method:'POST'});
+  clearToken(); currentUser=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('share-exp-btn').style.display='none';
+  clearInterval(examTimer); toast('Signed out successfully');
+}
+
+document.getElementById('auth-modal').addEventListener('click',e=>{if(e.target===document.getElementById('auth-modal'))closeAuth();});
+document.getElementById('portal-modal').addEventListener('click',e=>{if(e.target===document.getElementById('portal-modal'))closePortal();});
+document.getElementById('share-modal').addEventListener('click',e=>{if(e.target===document.getElementById('share-modal'))closeShareModal();});
+
+// ═══════════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════════
+function showApp(user){
+  const app=document.getElementById('app');app.style.display='';app.classList.remove('hidden');
+  document.getElementById('sidebar-user-name').textContent=user.name;
+  document.getElementById('sidebar-user-email').textContent=user.email;
+  const roleLabel={student:'STUDENT',admin:'ADMIN PANEL',holder:'OWNER PANEL'};
+  document.getElementById('sidebar-role-label').textContent=roleLabel[user.role]||'PORTAL';
+  const roleStyle={student:`<span class="badge badge-pu" style="font-size:10px">${user.branch||'CS'}</span>`,admin:`<span class="badge badge-gn" style="font-size:10px">ADMIN</span>`,holder:`<span class="badge badge-gd" style="font-size:10px">OWNER</span>`};
+  document.getElementById('sidebar-user-badge').innerHTML=roleStyle[user.role]||'';
+  buildNav(user.role);
+  const defaultView={student:'dashboard',admin:'admin-dashboard',holder:'holder-dashboard'};
+  navigate(defaultView[user.role]||'dashboard');
+}
+function buildNav(role){
+  const navMaps={
+    student:[{id:'dashboard',icon:'⊞',label:'Dashboard'},{id:'companies',icon:'🏢',label:'Companies'},{id:'co-questions',icon:'📚',label:'Interview Q&A'},{id:'performance',icon:'📈',label:'Performance'},{id:'profile',icon:'👤',label:'Profile'}],
+    admin:[{id:'admin-dashboard',icon:'⊞',label:'Dashboard'},{id:'admin-students',icon:'👥',label:'Students'},{id:'admin-companies',icon:'🏢',label:'Companies'},{id:'admin-questions',icon:'📝',label:'Questions'},{id:'admin-results',icon:'📊',label:'Results'}],
+    holder:[{id:'holder-dashboard',icon:'⊞',label:'Dashboard'},{id:'holder-admins',icon:'🛡',label:'Admins'},{id:'holder-students',icon:'👥',label:'All Students'}]
+  };
+  document.getElementById('nav-items').innerHTML=(navMaps[role]||navMaps.student).map(it=>`
+    <button class="nav-item" id="nav-${it.id}" onclick="navigate('${it.id}')">
+      <span class="nav-icon">${it.icon}</span>${it.label}
+    </button>`).join('');
+}
+function navigate(view){
+  if(activeView===view&&!['exam','result'].includes(view))return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page=document.getElementById('page-'+view);
+  if(page){page.classList.add('active');activeView=view;}
+  const navBtn=document.getElementById('nav-'+view);if(navBtn)navBtn.classList.add('active');
+  const renders={'dashboard':renderDashboard,'companies':renderCompanies,'co-questions':renderCoQuestions,'performance':renderPerformance,'profile':renderProfile,'admin-dashboard':renderAdminDashboard,'admin-students':renderAdminStudents,'admin-companies':renderAdminCompanies,'admin-questions':renderAdminQuestions,'admin-results':renderAdminResults,'holder-dashboard':renderHolderDashboard,'holder-admins':renderHolderAdmins,'holder-students':renderHolderStudents};
+  if(renders[view])renders[view]();
+}
+
+// ═══════════════════════════════════════
+// STUDENT DASHBOARD
+// ═══════════════════════════════════════
+function statCard(icon,label,val,color){return `<div class="stat-card"><div class="stat-icon">${icon}</div><div class="stat-num" style="color:${color}">${val}</div><div class="stat-label">${label}</div></div>`;}
+function renderDashboard(){
+  refreshCurrentUser();const u=currentUser;
+  document.getElementById('dash-greeting').textContent=`Welcome back, ${u.name.split(' ')[0]}! 👋`;
+  const scores=u.scores||{};const completed=Object.values(u.completedRounds||{}).flat().length;
+  const allS=Object.values(scores);const avg=allS.length?Math.round(allS.reduce((a,b)=>a+b,0)/allS.length):0;
+  const totalR=Object.keys(COMPANIES).reduce((s,k)=>s+COMPANIES[k].rounds.length,0);
+  document.getElementById('dash-stats').innerHTML=`${statCard('✅','Rounds Done',completed,'var(--gn)')}${statCard('📈','Avg Score',avg+'%','var(--pu2)')}${statCard('🏢','Companies',Object.keys(COMPANIES).length,'var(--gd)')}${statCard('🎯','Progress',Math.round((completed/totalR)*100)+'%','var(--cy)')}`;
+  document.getElementById('dash-company-tracks').innerHTML=Object.entries(COMPANIES).map(([k,co])=>{
+    const done=(u.completedRounds?.[k]||[]);const pct=Math.round((done.length/co.rounds.length)*100);
+    const roundBtns=co.rounds.map((r,idx)=>{
+      const prev=idx>0?co.rounds[idx-1]:null;
+      const unlocked=idx===0||done.includes(prev);
+      const isDone=done.includes(r);
+      const score=u.scores?.[`${k}_${r}`]??null;
+      const icons={Aptitude:'🧮',Technical:'⚙️',Coding:'💻',HR:'🤝'};
+      const bg=isDone?'rgba(56,217,169,.08)':unlocked?'rgba(255,255,255,.05)':'rgba(0,0,0,.1)';
+      const bdr=isDone?'rgba(56,217,169,.3)':unlocked?'rgba(255,255,255,.07)':'rgba(255,255,255,.03)';
+      const lbl=isDone&&score!==null?`Score: ${score}%`:unlocked?'Tap to start':'🔒 Complete '+prev+' first';
+      const clr=isDone?'var(--gn)':unlocked?'var(--tx)':'var(--tx3)';
+      const act=isDone?'✓ Done':unlocked?'▶':'🔒';
+      const actClr=isDone?'var(--gn)':unlocked?co.accent:'var(--tx3)';
+      return `<div onclick="${unlocked?`startExamFromDash('${k}','${r}')`:''}" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:${unlocked?'pointer':'not-allowed'};background:${bg};border:1px solid ${bdr};opacity:${unlocked?1:.45}">
+        <span style="font-size:16px">${icons[r]||'📋'}</span>
+        <div style="flex:1"><div style="font-size:12px;font-weight:700;color:${clr}">${r}</div><div style="font-size:10px;color:var(--tx3)">${lbl}</div></div>
+        <span style="font-size:11px;font-weight:700;flex-shrink:0;color:${actClr}">${act}</span>
+      </div>`;
+    }).join('');
+    return `<div id="track-${k}" style="background:var(--surf2);border-radius:11px;border:1px solid ${co.color}22;overflow:hidden">
+      <div style="padding:13px 15px;cursor:pointer" onclick="toggleTrack('${k}','${co.color}')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;border-radius:8px;background:${co.color};display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:9px;color:#fff;flex-shrink:0">${co.logo}</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:13px">${k}</div><div style="font-size:10px;color:var(--tx3)">${co.package} · ${done.length}/${co.rounds.length} done</div></div>
+          <span style="font-size:11px;color:var(--tx2);margin-right:6px">${pct}%</span>
+          <span id="track-arrow-${k}" style="color:var(--tx3);font-size:11px;display:inline-block;transition:transform .25s">▼</span>
+        </div>
+        <div class="progress" style="margin-top:10px"><div class="progress-bar" style="background:linear-gradient(90deg,${co.color},${co.accent});width:${pct}%"></div></div>
+      </div>
+      <div id="track-rounds-${k}" style="max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s">
+        <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:7px">${roundBtns}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const entries=Object.entries(scores).slice(-5).reverse();
+  document.getElementById('dash-recent').innerHTML=entries.length?entries.map(([k,sc])=>{const[co,rnd]=k.split('_');return `<div class="row-between" style="padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-weight:600;font-size:13px">${co} – ${rnd}</div></div><span class="badge ${sc>=70?'badge-gn':sc>=50?'badge-gd':'badge-rd'}">${sc}%</span></div>`;}).join(''):'<div style="color:var(--tx3);font-size:13px;text-align:center;padding:18px">No tests taken yet</div>';
+}
+
+// ═══════════════════════════════════════
+// COMPANIES
+// ═══════════════════════════════════════
+function renderCompanies(){
+  refreshCurrentUser();
+  document.getElementById('companies-list').style.display='';
+  document.getElementById('company-detail').classList.add('hidden');
+  const u=currentUser;
+  document.getElementById('companies-list').innerHTML=Object.entries(COMPANIES).map(([k,co])=>{
+    const done=(u.completedRounds?.[k]||[]);const pct=Math.round((done.length/co.rounds.length)*100);
+    const pills=co.rounds.map(r=>{const d=done.includes(r);return `<span class="round-pill" style="background:${d?'rgba(56,217,169,.12)':'rgba(255,255,255,.04)'};color:${d?'var(--gn)':'var(--tx3)'};border:1px solid ${d?'rgba(56,217,169,.3)':'var(--bdr)'}">${d?'✓ ':''}${r}</span>`;}).join('');
+    return `<div class="company-card" style="border:1px solid ${co.color}22;background:linear-gradient(135deg,${co.color}08,var(--surf))"
+      onmouseenter="this.style.borderColor='${co.color}55';this.style.boxShadow='0 12px 40px ${co.color}1a'"
+      onmouseleave="this.style.borderColor='${co.color}22';this.style.boxShadow=''"
+      onclick="showCompanyDetail('${k}')">
+      <div class="row-between" style="margin-bottom:14px;align-items:flex-start">
+        <div class="co-logo" style="background:${co.color}">${co.logo}</div>
+        <span class="badge ${co.difBadge}">${co.difficulty}</span>
+      </div>
+      <h3 style="font-family:var(--ff-head);font-size:20px;font-weight:700;margin-bottom:5px">${co.name}</h3>
+      <p style="font-size:12px;color:var(--tx3);margin-bottom:14px;line-height:1.6">${co.desc}</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">${pills}</div>
+      <div class="row-between" style="margin-bottom:10px"><span style="font-size:12px;color:var(--tx2)">${pct}% Complete</span><span style="font-size:13px;color:var(--gd);font-weight:700">${co.package}</span></div>
+      <div class="progress"><div class="progress-bar" style="background:linear-gradient(90deg,${co.color},${co.accent});width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+function showCompanyDetail(key){
+  refreshCurrentUser();const co=COMPANIES[key];const u=currentUser;
+  document.getElementById('companies-list').style.display='none';
+  const detail=document.getElementById('company-detail');detail.classList.remove('hidden');
+  const roundCards=co.rounds.map((r,idx)=>{
+    const prev=idx>0?co.rounds[idx-1]:null;
+    const unlocked=idx===0||(u.completedRounds?.[key]||[]).includes(prev);
+    const done=(u.completedRounds?.[key]||[]).includes(r);
+    const score=u.scores?.[`${key}_${r}`]??null;
+    const icons={Aptitude:'🧮',Technical:'⚙️',Coding:'💻',HR:'🤝'};
+    const scoreBar=score!==null?`<div style="margin-bottom:14px"><div class="row-between" style="margin-bottom:6px;font-size:13px"><span style="color:var(--tx2)">Your Score</span><span style="font-weight:700;color:${score>=70?'var(--gn)':score>=50?'var(--gd)':'var(--rd)'}">${score}%</span></div><div class="progress"><div class="progress-bar" style="background:${score>=70?'linear-gradient(90deg,var(--gn),#6ee7b7)':score>=50?'linear-gradient(90deg,var(--gd),#fcd34d)':'linear-gradient(90deg,var(--rd),#fca5a5)'};width:${score}%"></div></div></div>`:'';
+    return `<div class="card" style="opacity:${unlocked?1:.5};border:1px solid ${done?'rgba(56,217,169,.35)':'var(--bdr)'}">
+      ${done?`<div style="margin-bottom:10px"><span class="badge badge-gn">✓ Completed</span></div>`:!unlocked?`<div style="margin-bottom:10px"><span class="badge" style="background:rgba(255,255,255,.04);color:var(--tx3);border:1px solid var(--bdr)">🔒 Locked</span></div>`:''}
+      <div style="font-size:36px;margin-bottom:14px">${icons[r]}</div>
+      <h3 style="font-family:var(--ff-head);font-size:18px;font-weight:700;margin-bottom:6px">${r} Round</h3>
+      <p style="font-size:12px;color:var(--tx2);margin-bottom:16px">${EXAM_META[r].label}</p>
+      ${scoreBar}
+      <button class="btn ${unlocked?'btn-primary':'btn-ghost'} btn-block" ${unlocked?`onclick="startExam('${key}','${r}')"`:''}>${done?'🔄 Retake':unlocked?'▶ Start Exam':`🔒 Complete ${prev} first`}</button>
+    </div>`;
+  }).join('');
+  detail.innerHTML=`
+    <div class="row" style="gap:10px;margin-bottom:22px">
+      <button class="btn btn-ghost btn-sm" onclick="renderCompanies()">← Back</button>
+      <button class="btn btn-outline btn-sm" onclick="coQActiveTab='${key}';navigate('co-questions')">📚 View Questions</button>
+    </div>
+    <div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,${co.color}15,var(--surf));border:1px solid ${co.color}44">
+      <div class="row" style="gap:18px">
+        <div class="co-logo" style="width:64px;height:64px;border-radius:16px;font-size:14px;background:${co.color};flex-shrink:0">${co.logo}</div>
+        <div>
+          <h1 style="font-family:var(--ff-head);font-size:22px;font-weight:700;margin-bottom:5px">${co.name}</h1>
+          <p style="color:var(--tx2);font-size:13px;margin-bottom:10px">${co.desc}</p>
+          <div class="row" style="gap:8px;flex-wrap:wrap">
+            <span class="badge badge-gd">💰 ${co.package}</span>
+            <span class="badge badge-cy">👥 ${co.slots} seats</span>
+            <span class="badge ${co.difBadge}">⚡ ${co.difficulty}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3 style="font-family:var(--ff-head);font-size:17px;font-weight:600;margin-bottom:18px">Exam Rounds</h3>
+    <div class="g2">${roundCards}</div>`;
+}
+
+// ═══════════════════════════════════════
+// COMPANY QUESTIONS
+// ═══════════════════════════════════════
+function renderCoQuestions(){
+  const tabs=document.getElementById('co-q-tabs');
+  tabs.innerHTML=Object.keys(COMPANY_QUESTIONS).map(k=>`<button class="tab-btn ${coQActiveTab===k?'active':''}" onclick="coQActiveTab='${k}';renderCoQuestions()">${k}</button>`).join('');
+  const qs=COMPANY_QUESTIONS[coQActiveTab];const co=COMPANIES[coQActiveTab];
+  const catColors={Aptitude:'badge-gd',Technical:'badge-cy',Coding:'badge-pu',HR:'badge-gn'};
+  const diffColors={Easy:'badge-gn',Medium:'badge-gd',Hard:'badge-rd'};
+  document.getElementById('co-q-content').innerHTML=`
+    <div class="card" style="margin-bottom:18px;background:linear-gradient(135deg,${co.color}10,var(--surf));border:1px solid ${co.color}33">
+      <div class="row" style="gap:14px">
+        <div style="width:48px;height:48px;border-radius:12px;background:${co.color};display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:11px;color:#fff;flex-shrink:0">${co.logo}</div>
+        <div><h2 style="font-size:18px;font-weight:700;margin-bottom:3px">${co.name}</h2><p style="font-size:12px;color:var(--tx3)">${qs.length} interview questions</p></div>
+      </div>
+    </div>
+    <div class="col" style="gap:10px">
+      ${qs.map((q,i)=>`<div class="co-question-item">
+        <div class="row" style="gap:7px;margin-bottom:9px">
+          <span class="badge ${catColors[q.cat]||'badge-pu'}" style="font-size:10px">${q.cat}</span>
+          <span class="badge ${diffColors[q.diff]||'badge-gd'}" style="font-size:10px">${q.diff}</span>
+          <span style="font-size:11px;color:var(--tx3);margin-left:auto">Q${i+1}</span>
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px">${q.q}</div>
+        <div style="background:var(--surf3);border-radius:8px;padding:11px 13px;border-left:3px solid ${co.color}">
+          <div style="font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:.5px;margin-bottom:5px">ANSWER</div>
+          <div style="font-size:13px;color:var(--tx2);line-height:1.7">${q.a}</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ═══════════════════════════════════════
+// EXAM ENGINE
+// ═══════════════════════════════════════
+function startExam(company,round){
+  clearInterval(examTimer);const meta=EXAM_META[round];
+  examState={company,round,questions:QBANK[round],totalTime:meta.duration,timeLeft:meta.duration,answers:{},currentQ:0,submitted:false};
+  navigate('exam');renderExam();startTimer();
+}
+function renderExam(){
+  document.getElementById('exam-title').textContent=`${examState.company} — ${examState.round} Round`;
+  renderQuestion();renderQNav();
+}
+function renderQuestion(){
+  const s=examState;const q=s.questions[s.currentQ];const total=s.questions.length;
+  document.getElementById('exam-q-counter').textContent=`Question ${s.currentQ+1} of ${total}`;
+  document.getElementById('exam-prev-btn').disabled=s.currentQ===0;
+  const isLast=s.currentQ===total-1;
+  document.getElementById('exam-next-btn').textContent=isLast?'✓ Submit':'Next →';
+  document.getElementById('exam-next-btn').className=isLast?'btn btn-success btn-sm':'btn btn-primary btn-sm';
+  document.getElementById('exam-next-btn').onclick=isLast?()=>submitExam(false):()=>examNav(1);
+  let html='';
+  if(s.round==='Aptitude'||s.round==='Technical'){
+    html=`<div class="row" style="gap:8px;margin-bottom:16px"><span class="badge badge-pu">Q${s.currentQ+1}</span><span class="badge badge-cy">${s.round}</span></div>
+    <p class="q-text">${q.text}</p>
+    ${q.opts.map((o,i)=>`<div class="option ${s.answers[s.currentQ]===i?'selected':''}" onclick="selectOption(${i})"><div class="opt-letter">${String.fromCharCode(65+i)}</div>${o}</div>`).join('')}`;
+  } else if(s.round==='Coding'){
+    const code=s.answers[`code_${s.currentQ}`]||q.starter||'';
+    html=`<div class="row" style="gap:8px;margin-bottom:16px"><span class="badge badge-pu">Problem ${s.currentQ+1}</span><span class="badge badge-cy">Coding</span></div>
+    <p class="q-text">${q.text}</p>
+    <div style="background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--gd);margin-bottom:14px">💡 ${q.hint}</div>
+    <div class="code-area"><div class="code-header"><span>📝 JavaScript</span><button style="background:none;color:var(--tx3);font-size:12px;cursor:pointer;font-family:var(--ff-body)" onclick="resetCode()">Reset</button></div>
+    <textarea class="code-editor" id="code-editor" onchange="saveCode()" oninput="saveCode()">${code}</textarea></div>
+    <div class="row" style="gap:10px;margin-bottom:12px">
+      <button class="btn btn-primary btn-sm" id="run-btn" onclick="runCode()">▶ Run Code</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('code-output').textContent=''">Clear</button>
+    </div>
+    <pre class="code-output" id="code-output">${s.answers[`output_${s.currentQ}`]||'Output will appear here...'}</pre>`;
+  } else {
+    html=`<div class="row" style="gap:8px;margin-bottom:16px"><span class="badge badge-pu">Q${s.currentQ+1}</span><span class="badge badge-gn">HR</span></div>
+    <p class="q-text">${q.text}</p>
+    <textarea class="inp" placeholder="${q.placeholder}" style="min-height:180px;line-height:1.75" oninput="saveHR(this.value)">${s.answers[s.currentQ]||''}</textarea>
+    <div style="margin-top:8px;font-size:12px;color:var(--tx3)">Tip: Use STAR method. Write at least 80 words for full marks.</div>`;
+  }
+  document.getElementById('exam-q-area').innerHTML=html;
+}
+function selectOption(i){examState.answers[examState.currentQ]=i;renderQuestion();renderQNav();}
+function saveCode(){const ta=document.getElementById('code-editor');if(ta)examState.answers[`code_${examState.currentQ}`]=ta.value;}
+function resetCode(){examState.answers[`code_${examState.currentQ}`]=examState.questions[examState.currentQ].starter||'';renderQuestion();}
+function saveHR(val){examState.answers[examState.currentQ]=val;}
+async function runCode(){
+  saveCode();const btn=document.getElementById('run-btn');const out=document.getElementById('code-output');
+  if(!btn||!out)return;btn.disabled=true;btn.textContent='⟳ Running...';out.textContent='Running...';
+  await new Promise(r=>setTimeout(r,800));
+  const code=examState.answers[`code_${examState.currentQ}`]||'';
+  try{
+    const logs=[];const fn=new Function('console',code);fn({log:(...a)=>logs.push(a.map(String).join(' '))});
+    const output=logs.join('\n')||'(no output)';
+    out.textContent='✅ Output:\n'+output+'\n\nCompleted in 0.08s';
+    examState.answers[`output_${examState.currentQ}`]='✅ Output:\n'+output;
+    examState.answers[`code_done_${examState.currentQ}`]=true;
+  }catch(e){out.textContent='❌ Error:\n'+e.message;examState.answers[`output_${examState.currentQ}`]='❌ '+e.message;}
+  btn.disabled=false;btn.textContent='▶ Run Code';
+}
+function examNav(dir){
+  const next=examState.currentQ+dir;if(next<0||next>=examState.questions.length)return;
+  saveCode();examState.currentQ=next;renderQuestion();renderQNav();
+}
+function renderQNav(){
+  const s=examState;const answered=Object.keys(s.answers).filter(k=>!k.startsWith('code_')&&!k.startsWith('output_')&&!k.startsWith('code_done_')).length;
+  document.getElementById('nav-answered').textContent=`Answered (${answered})`;
+  document.getElementById('nav-unanswered').textContent=`Unanswered (${s.questions.length-answered})`;
+  document.getElementById('q-nav-grid').innerHTML=s.questions.map((_,i)=>{
+    const cur=i===s.currentQ;const ans=s.answers[i]!==undefined||s.answers[`code_done_${i}`];
+    return `<button class="q-nav-btn ${cur?'current':ans?'answered':''}" onclick="examNav(${i-s.currentQ})">${i+1}</button>`;
+  }).join('');
+}
+function startTimer(){
+  clearInterval(examTimer);updateTimerUI();
+  examTimer=setInterval(()=>{examState.timeLeft--;updateTimerUI();if(examState.timeLeft<=0){clearInterval(examTimer);submitExam(true);}},1000);
+}
+function updateTimerUI(){
+  const s=examState;const pct=(s.timeLeft/s.totalTime)*100;
+  const m=Math.floor(s.timeLeft/60).toString().padStart(2,'0');const sec=(s.timeLeft%60).toString().padStart(2,'0');
+  const timerEl=document.getElementById('exam-timer');const fillEl=document.getElementById('exam-timer-fill');
+  if(!timerEl)return;timerEl.textContent=`${m}:${sec}`;
+  timerEl.className='timer-display'+(pct<=15?' danger':pct<=40?' warn':'');
+  if(fillEl){fillEl.style.width=pct+'%';fillEl.style.background=pct<=15?'var(--rd)':pct<=40?'var(--gd)':'var(--gn)';}
+}
+async function submitExam(auto){
+  clearInterval(examTimer);if(examState.submitted)return;examState.submitted=true;
+  const s=examState;let score=0;const total=s.questions.length;
+  if(s.round==='Aptitude'||s.round==='Technical'){s.questions.forEach((q,i)=>{if(s.answers[i]===q.ans)score++;});}
+  else if(s.round==='Coding'){s.questions.forEach((_,i)=>{if(s.answers[`code_done_${i}`])score++;});}
+  else{s.questions.forEach((_,i)=>{if(s.answers[i]&&s.answers[i].length>50)score++;});}
+  const pct=Math.round((score/total)*100);const passed=pct>=50;
+
+  // ── Save to DB ──────────────────────────────────────────────
+  if(currentUser && currentUser.role==='student'){
+    const res = await api('/save_result.php',{
+      method:'POST',
+      body:{ company:s.company, round:s.round, score:pct,
+             total_q:total, correct_q:score, passed }
+    });
+    if(res.success){
+      // Update in-memory user object
+      currentUser.completedRounds = currentUser.completedRounds||{};
+      currentUser.completedRounds[s.company]=[...new Set([...(currentUser.completedRounds[s.company]||[]),s.round])];
+      currentUser.scores = currentUser.scores||{};
+      currentUser.scores[`${s.company}_${s.round}`]=pct;
+    }
+  }
+  navigate('result');
+  document.getElementById('result-emoji').textContent=pct>=70?'🏆':pct>=50?'✅':'📚';
+  document.getElementById('result-title').textContent=passed?'Round Cleared!':'Keep Practicing!';
+  document.getElementById('result-sub').textContent=auto?'Time expired — auto-submitted':`${s.company} · ${s.round} Round`;
+  document.getElementById('result-pct').textContent=pct+'%';
+  document.getElementById('result-pct-label').textContent='SCORE';
+  const ring=document.getElementById('result-ring');
+  ring.style.background=pct>=70?'rgba(56,217,169,.12)':pct>=50?'rgba(245,200,66,.12)':'rgba(249,106,106,.12)';
+  ring.style.border=`3px solid ${pct>=70?'var(--gn)':pct>=50?'var(--gd)':'var(--rd)'}`;
+  document.getElementById('result-pct').style.color=pct>=70?'var(--gn)':pct>=50?'var(--gd)':'var(--rd)';
+  document.getElementById('result-status-badge').innerHTML=`<span class="badge ${passed?'badge-gn':'badge-rd'}">${passed?'✓ PASSED':'✗ FAILED'}</span>`;
+  document.getElementById('result-score-text').textContent=`${score} / ${total} ${s.round==='HR'?'answered':'correct'}`;
+  if(passed)document.getElementById('result-unlock-msg').classList.remove('hidden');
+  else document.getElementById('result-unlock-msg').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════
+// PERFORMANCE
+// ═══════════════════════════════════════
+function renderPerformance(){
+  refreshCurrentUser();const u=currentUser;const scores=u.scores||{};const el=document.getElementById('perf-content');
+  if(!Object.keys(scores).length){el.innerHTML=`<div class="card" style="text-align:center;padding:60px"><div style="font-size:60px;margin-bottom:18px">📊</div><h3 style="font-size:20px;margin-bottom:10px">No Data Yet</h3><p style="color:var(--tx2)">Complete mock exams to see analytics.</p><button class="btn btn-primary" style="margin-top:18px" onclick="navigate('companies')">Start a Test</button></div>`;return;}
+  const allV=Object.values(scores);const avg=Math.round(allV.reduce((a,b)=>a+b,0)/allV.length);const best=Math.max(...allV);
+  el.innerHTML=`<div class="g3" style="margin-bottom:24px">${statCard('📋','Tests Taken',allV.length,'var(--pu2)')}${statCard('🏆','Best Score',best+'%','var(--gn)')}${statCard('📈','Average',avg+'%','var(--gd)')}</div>
+  <div class="g2">${Object.entries(COMPANIES).map(([k,co])=>{
+    const cs=co.rounds.map(r=>({r,s:scores[`${k}_${r}`]})).filter(x=>x.s!==undefined);
+    if(!cs.length)return'';const ca=Math.round(cs.reduce((a,b)=>a+b.s,0)/cs.length);
+    return `<div class="card" style="border:1px solid ${co.color}33">
+      <div class="row-between" style="margin-bottom:18px">
+        <div class="row" style="gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:${co.color};display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:10px;color:#fff;flex-shrink:0">${co.logo}</div><div><div style="font-weight:700;font-size:16px">${k}</div><div style="font-size:11px;color:var(--tx3)">${cs.length}/${co.rounds.length} rounds</div></div></div>
+        <div style="font-family:var(--ff-head);font-weight:700;font-size:20px;color:${ca>=70?'var(--gn)':ca>=50?'var(--gd)':'var(--rd)'}">${ca}%</div>
+      </div>
+      ${cs.map(({r,s})=>`<div class="perf-bar-wrap"><div class="perf-bar-label"><span>${r}</span><span style="font-weight:700;color:${s>=70?'var(--gn)':s>=50?'var(--gd)':'var(--rd)'}">${s}%</span></div><div class="progress"><div class="progress-bar" style="background:${s>=70?'linear-gradient(90deg,var(--gn),#6ee7b7)':s>=50?'linear-gradient(90deg,var(--gd),#fcd34d)':'linear-gradient(90deg,var(--rd),#fca5a5)'};width:${s}%"></div></div></div>`).join('')}
+    </div>`;
+  }).filter(Boolean).join('')}</div>`;
+}
+
+// ═══════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════
+function renderProfile(){
+  refreshCurrentUser();const u=currentUser;
+  document.getElementById('profile-avatar').textContent=u.name?.[0]||'U';
+  document.getElementById('profile-name-display').textContent=u.name;
+  document.getElementById('profile-email-display').textContent=u.email;
+  document.getElementById('profile-badges').innerHTML=`<span class="badge badge-pu">${u.rollNo}</span><span class="badge badge-cy">${u.role}</span>`;
+  document.getElementById('pf-name').value=u.name;document.getElementById('pf-email').value=u.email;
+  document.getElementById('pf-branch').value=u.branch||'';document.getElementById('pf-cgpa').value=u.cgpa||'';
+  document.getElementById('pf-roll').value=u.rollNo||'';document.getElementById('pf-phone').value=u.phone||'';
+}
+async function saveProfile(){
+  const name   = document.getElementById('pf-name').value.trim();
+  const branch = document.getElementById('pf-branch').value.trim();
+  const cgpa   = parseFloat(document.getElementById('pf-cgpa').value)||null;
+  const phone  = document.getElementById('pf-phone').value.trim();
+  const res = await api('/profile.php',{method:'POST', body:{name,branch,cgpa,phone}});
+  if(res.success){
+    currentUser.name=name||currentUser.name;
+    currentUser.branch=branch; currentUser.cgpa=cgpa; currentUser.phone=phone;
+    renderProfile(); toast('Profile saved!');
+  } else {
+    toast(res.message||'Could not save profile','error');
+  }
+}
+
+// ═══════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════
+function renderAdminDashboard(){
+  const students=getUsers().filter(u=>u.role==='student');
+  const totalExams=students.reduce((s,u)=>s+Object.keys(u.scores||{}).length,0);
+  const totalQ=Object.values(QBANK).reduce((s,q)=>s+q.length,0);
+  document.getElementById('admin-stats').innerHTML=`${statCard('👥','Students',students.length,'var(--pu2)')}${statCard('🏢','Companies',Object.keys(COMPANIES).length,'var(--gd)')}${statCard('📝','Questions',totalQ,'var(--cy)')}${statCard('✅','Exams',totalExams,'var(--gn)')}`;
+  const recent=students.slice(-5).reverse().map(s=>`<div class="row-between" style="padding:10px 0;border-bottom:1px solid var(--bdr)">
+    <div class="row" style="gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${s.name[0]}</div>
+    <div><div style="font-weight:600;font-size:13px">${s.name}</div><div style="font-size:11px;color:var(--tx3)">${s.rollNo} · ${s.branch||'CS'}</div></div></div>
+    <button class="btn btn-ghost btn-sm" onclick="openStudentDetail(${s.id})">View</button>
+  </div>`).join('');
+  document.getElementById('admin-overview').innerHTML=`
+    <div class="card"><h3 style="font-family:var(--ff-head);font-size:16px;font-weight:600;margin-bottom:16px">Recent Students</h3>${recent||'<div style="color:var(--tx3);text-align:center;padding:20px">No students yet</div>'}</div>
+    <div class="card"><h3 style="font-family:var(--ff-head);font-size:16px;font-weight:600;margin-bottom:16px">Question Bank</h3>
+    ${Object.entries(QBANK).map(([t,qs])=>`<div style="margin-bottom:12px"><div class="row-between" style="margin-bottom:6px;font-size:13px"><span style="font-weight:600">${t}</span><span style="color:var(--tx2)">${qs.length} questions</span></div><div class="progress"><div class="progress-bar" style="width:${Math.round((qs.length/10)*100)}%"></div></div></div>`).join('')}</div>`;
+}
+let _allStudents = [];
+async function renderAdminStudents(){
+  document.getElementById('admin-students-count').textContent='Loading...';
+  const res = await api('/admin_students.php');
+  if(res.success){
+    _allStudents = res.students.map(s=>({...s, rollNo:s.roll_no||s.rollNo||''}));
+    document.getElementById('admin-students-count').textContent=_allStudents.length+' registered students';
+    renderStudentsTable(_allStudents);
+  } else {
+    document.getElementById('admin-students-count').textContent='Failed to load';
+  }
+}
+function filterStudents(){
+  const q=document.getElementById('student-search').value.toLowerCase();
+  renderStudentsTable(_allStudents.filter(s=>
+    s.name.toLowerCase().includes(q)||s.email.toLowerCase().includes(q)||(s.rollNo||'').toLowerCase().includes(q)
+  ));
+}
+function renderStudentsTable(students){
+  const rows=students.map(s=>{
+    const tests=Object.keys(s.scores||{}).length;const avg=tests?Math.round(Object.values(s.scores).reduce((a,b)=>a+b,0)/tests):0;
+    return `<tr><td><div class="row" style="gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${s.name[0]}</div><div><div style="font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--tx3)">${s.email}</div></div></div></td>
+    <td>${s.roll_no||s.rollNo||'—'}</td><td>${s.branch||'CS'}</td><td>${s.cgpa||'—'}</td><td>${tests}</td>
+    <td>${tests?`<span class="badge ${avg>=70?'badge-gn':avg>=50?'badge-gd':'badge-rd'}">${avg}%</span>`:'—'}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="openStudentDetail(${s.id})">Details</button></td></tr>`;
+  }).join('');
+  document.getElementById('students-table').innerHTML=`<thead><tr><th>Student</th><th>Roll No</th><th>Branch</th><th>CGPA</th><th>Tests</th><th>Avg</th><th>Action</th></tr></thead><tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--tx3)">No students found</td></tr>'}</tbody>`;
+}
+function openStudentDetail(id){
+  const s=getUsers().find(u=>u.id===id);if(!s)return;
+  const tests=Object.keys(s.scores||{}).length;const avg=tests?Math.round(Object.values(s.scores).reduce((a,b)=>a+b,0)/tests):0;
+  const scoreRows=Object.entries(s.scores||{}).map(([k,sc])=>{const[co,rnd]=k.split('_');return `<div class="row-between" style="padding:8px 0;border-bottom:1px solid var(--bdr)"><div><span style="font-weight:600;font-size:13px">${co}</span><span style="color:var(--tx3);font-size:12px"> — ${rnd}</span></div><span class="badge ${sc>=70?'badge-gn':sc>=50?'badge-gd':'badge-rd'}">${sc}%</span></div>`;}).join('');
+  document.getElementById('student-detail-content').innerHTML=`
+    <div class="row" style="gap:14px;margin-bottom:18px">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff;flex-shrink:0">${s.name[0]}</div>
+      <div><div style="font-size:18px;font-weight:700">${s.name}</div><div style="color:var(--tx2);font-size:12px">${s.email}</div></div>
+    </div>
+    <div class="student-detail-grid">
+      <div class="detail-item"><div class="di-label">Roll Number</div><div class="di-val">${s.roll_no||s.rollNo||'—'}</div></div>
+      <div class="detail-item"><div class="di-label">Branch</div><div class="di-val">${s.branch||'—'}</div></div>
+      <div class="detail-item"><div class="di-label">CGPA</div><div class="di-val">${s.cgpa||'—'}</div></div>
+      <div class="detail-item"><div class="di-label">Phone</div><div class="di-val">${s.phone||'—'}</div></div>
+      <div class="detail-item"><div class="di-label">Tests Taken</div><div class="di-val" style="color:var(--pu2)">${tests}</div></div>
+      <div class="detail-item"><div class="di-label">Average Score</div><div class="di-val" style="color:${avg>=70?'var(--gn)':avg>=50?'var(--gd)':'var(--rd)'}">${tests?avg+'%':'—'}</div></div>
+    </div>
+    ${tests?`<div style="margin-top:18px"><div style="font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.5px;margin-bottom:10px">EXAM RESULTS</div>${scoreRows}</div>`:'<div style="text-align:center;padding:20px;color:var(--tx3)">No exams taken yet</div>'}`;
+  document.getElementById('student-detail-modal').classList.remove('hidden');
+}
+function renderAdminCompanies(){
+  document.getElementById('admin-companies-grid').innerHTML=Object.entries(COMPANIES).map(([k,co])=>`
+    <div class="card" style="border:1px solid ${co.color}33">
+      <div class="row" style="gap:14px;margin-bottom:18px">
+        <div class="co-logo" style="width:50px;height:50px;border-radius:13px;background:${co.color};font-size:11px;flex-shrink:0">${co.logo}</div>
+        <div><h3 style="font-family:var(--ff-head);font-size:16px;font-weight:700;margin-bottom:3px">${co.name}</h3><p style="font-size:12px;color:var(--tx3)">${co.desc}</p></div>
+      </div>
+      <div class="g2" style="margin-bottom:14px">
+        <div style="background:var(--surf2);border-radius:9px;padding:12px"><div style="font-size:10px;color:var(--tx3);margin-bottom:5px;font-weight:700;letter-spacing:.5px">PACKAGE</div><div style="font-weight:700;color:var(--gd);font-size:14px">${co.package}</div></div>
+        <div style="background:var(--surf2);border-radius:9px;padding:12px"><div style="font-size:10px;color:var(--tx3);margin-bottom:5px;font-weight:700;letter-spacing:.5px">SEATS</div><div style="font-weight:700;font-size:14px">${co.slots}</div></div>
+        <div style="background:var(--surf2);border-radius:9px;padding:12px"><div style="font-size:10px;color:var(--tx3);margin-bottom:5px;font-weight:700;letter-spacing:.5px">DIFFICULTY</div><span class="badge ${co.difBadge}" style="font-size:10px">${co.difficulty}</span></div>
+        <div style="background:var(--surf2);border-radius:9px;padding:12px"><div style="font-size:10px;color:var(--tx3);margin-bottom:5px;font-weight:700;letter-spacing:.5px">ROUNDS</div><div style="font-weight:700;font-size:14px">${co.rounds.length}</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${co.rounds.map(r=>`<span class="round-pill" style="background:${co.color}20;color:${co.accent};border:1px solid ${co.color}40">${r}</span>`).join('')}</div>
+    </div>`).join('');
+}
+function renderAdminQuestions(){
+  document.getElementById('qbank-tabs').innerHTML=Object.keys(QBANK).map(t=>`<button class="btn ${qbankActiveTab===t?'btn-primary':'btn-ghost'} btn-sm" onclick="qbankActiveTab='${t}';renderAdminQuestions()">${t} (${QBANK[t].length})</button>`).join('');
+  document.getElementById('qbank-list').innerHTML=QBANK[qbankActiveTab].map((q,i)=>{
+    const isCode=q.lang,isHR=q.placeholder;
+    return `<div class="card card-sm"><div class="row" style="gap:8px;margin-bottom:10px"><span class="badge badge-pu">Q${i+1}</span><span class="badge badge-cy">${qbankActiveTab}</span>${isCode?'<span class="badge badge-gd">Coding</span>':isHR?'<span class="badge badge-gn">HR</span>':'<span class="badge badge-or">MCQ</span>'}</div>
+    <p style="font-size:14px;font-weight:500;margin-bottom:${q.opts?12:0}px">${q.text||q.text}</p>
+    ${q.opts?`<div style="display:flex;gap:7px;flex-wrap:wrap">${q.opts.map((o,idx)=>`<span style="padding:4px 11px;border-radius:8px;font-size:12px;background:${idx===q.ans?'rgba(56,217,169,.12)':'var(--surf2)'};border:1px solid ${idx===q.ans?'rgba(56,217,169,.4)':'var(--bdr)'};color:${idx===q.ans?'var(--gn)':'var(--tx2)'}">${String.fromCharCode(65+idx)}: ${o}</span>`).join('')}</div>${q.exp?`<div style="margin-top:9px;font-size:12px;color:var(--tx3)">💡 ${q.exp}</div>`:''}`:''}
+    </div>`;
+  }).join('');
+}
+async function renderAdminResults(){
+  document.getElementById('results-count').textContent='Loading...';
+  const res = await api('/admin_results.php');
+  if(!res.success){ document.getElementById('results-count').textContent='Failed to load'; return; }
+  const all = res.results;
+  document.getElementById('results-count').textContent=all.length+' total exam records';
+  const rows=all.map(r=>{
+    const co=r.company; const sc=r.score;
+    return `<tr><td style="font-weight:600">${r.name}</td><td style="color:var(--tx2)">${r.roll_no||'—'}</td>
+    <td><div class="row" style="gap:7px"><div style="width:22px;height:22px;border-radius:5px;background:${COMPANIES[co]?.color||'#555'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0">${COMPANIES[co]?.logo||co[0]}</div>${co}</div></td>
+    <td><span class="badge badge-pu" style="font-size:10px">${r.round}</span></td>
+    <td><span class="badge ${sc>=70?'badge-gn':sc>=50?'badge-gd':'badge-rd'}">${sc}%</span></td>
+    <td><span class="badge ${sc>=50?'badge-gn':'badge-rd'}" style="font-size:10px">${sc>=50?'PASS':'FAIL'}</span></td>
+    <td style="font-size:11px;color:var(--tx3)">${r.taken_at?r.taken_at.slice(0,10):'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('results-table').innerHTML=`<thead><tr><th>Student</th><th>Roll</th><th>Company</th><th>Round</th><th>Score</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--tx3)">No results yet</td></tr>'}</tbody>`;
+}
+
+// ═══════════════════════════════════════
+// WEBSITE HOLDER
+// ═══════════════════════════════════════
+function renderHolderDashboard(){
+  const all=getUsers();const admins=all.filter(u=>u.role==='admin');const students=all.filter(u=>u.role==='student');
+  const totalExams=students.reduce((s,u)=>s+Object.keys(u.scores||{}).length,0);
+  document.getElementById('holder-stats').innerHTML=`${statCard('🛡','Admins',admins.length,'var(--gn)')}${statCard('👥','Students',students.length,'var(--pu2)')}${statCard('✅','Total Exams',totalExams,'var(--cy)')}${statCard('🏢','Companies',Object.keys(COMPANIES).length,'var(--gd)')}`;
+  document.getElementById('holder-summary').innerHTML=`<div class="g2">
+    <div>
+      <div style="font-size:12px;color:var(--tx3);font-weight:700;letter-spacing:.5px;margin-bottom:12px">REGISTERED ADMINS</div>
+      ${admins.map(a=>`<div class="row-between" style="padding:9px 0;border-bottom:1px solid var(--bdr)">
+        <div class="row" style="gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gn),#6ee7b7);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;color:#0a2a1f">${a.name[0]}</div>
+        <div><div style="font-weight:600;font-size:13px">${a.name}</div><div style="font-size:11px;color:var(--tx3)">${a.dept||'Administration'}</div></div></div>
+        <span class="badge badge-gn" style="font-size:10px">Active</span>
+      </div>`).join('')||'<div style="color:var(--tx3);text-align:center;padding:18px">No admins yet</div>'}
+    </div>
+    <div>
+      <div style="font-size:12px;color:var(--tx3);font-weight:700;letter-spacing:.5px;margin-bottom:12px">COMPANY ACTIVITY</div>
+      ${Object.entries(COMPANIES).map(([k,co])=>{const n=students.filter(s=>Object.keys(s.scores||{}).some(key=>key.startsWith(k))).length;return `<div style="margin-bottom:10px"><div class="row-between" style="margin-bottom:5px"><span style="font-size:13px;font-weight:600">${k}</span><span style="font-size:11px;color:var(--tx2)">${n} students</span></div><div class="progress"><div class="progress-bar" style="background:linear-gradient(90deg,${co.color},${co.accent});width:${Math.min(100,n*15)}%"></div></div></div>`;}).join('')}
+    </div>
+  </div>`;
+}
+async function renderHolderAdmins(){
+  const res = await api('/admin_manage.php');
+  const admins = res.success ? res.admins : [];
+  document.getElementById('holder-admins-count').textContent=admins.length+' admins registered';
+  document.getElementById('admins-grid').innerHTML=admins.map(a=>`
+    <div class="holder-admin-card">
+      <div class="row" style="gap:12px;margin-bottom:14px">
+        <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gn),#6ee7b7);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#0a2a1f;flex-shrink:0">${a.name[0]}</div>
+        <div><div style="font-weight:700;font-size:15px">${a.name}</div><div style="font-size:12px;color:var(--tx3)">${a.email}</div></div>
+      </div>
+      <div class="col" style="gap:7px">
+        <div class="row-between" style="font-size:12px"><span style="color:var(--tx3)">Department</span><span>${a.dept||'Administration'}</span></div>
+        <div class="row-between" style="font-size:12px"><span style="color:var(--tx3)">College</span><span>${a.college||'—'}</span></div>
+        <div class="row-between" style="font-size:12px"><span style="color:var(--tx3)">Joined</span><span>${new Date(a.joinedAt).toLocaleDateString()}</span></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:7px"><span class="badge badge-gn" style="font-size:10px">✓ Active</span><span class="badge badge-pu" style="font-size:10px">ADMIN</span></div>
+    </div>`).join('')||'<div style="color:var(--tx3);grid-column:1/-1;text-align:center;padding:40px">No admins yet</div>';
+}
+async function renderHolderStudents(){
+  const res = await api('/admin_students.php');
+  const students = res.success ? res.students : [];
+  const rows=students.map(s=>{
+    const t=Object.keys(s.scores||{}).length;
+    const vals=Object.values(s.scores||{}).map(x=>typeof x==='object'?x.score:x);
+    const avg=t?Math.round(vals.reduce((a,b)=>a+b,0)/t):0;
+    return `<tr><td><div style="font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--tx3)">${s.email}</div></td><td>${s.roll_no||'—'}</td><td>${s.branch||'—'}</td><td>${s.cgpa||'—'}</td><td>${t}</td><td>${t?`<span class="badge ${avg>=70?'badge-gn':avg>=50?'badge-gd':'badge-rd'}">${avg}%</span>`:'—'}</td><td style="font-size:11px;color:var(--tx3)">${s.created_at?s.created_at.slice(0,10):'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('holder-students-table').innerHTML=`<thead><tr><th>Student</th><th>Roll</th><th>Branch</th><th>CGPA</th><th>Tests</th><th>Avg</th><th>Joined</th></tr></thead><tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--tx3)">No students yet</td></tr>'}</tbody>`;
+}
+async function addNewAdmin(){
+  const name=document.getElementById('new-admin-name').value.trim();
+  const email=document.getElementById('new-admin-email').value.trim();
+  const pass=document.getElementById('new-admin-pass').value;
+  const dept=document.getElementById('new-admin-dept').value.trim();
+  if(!name||!email||!pass){toast('Please fill all required fields','error');return;}
+  const res = await api('/admin_manage.php',{method:'POST',body:{name,email,password:pass,dept}});
+  if(res.success){
+    document.getElementById('add-admin-modal').classList.add('hidden');
+    renderHolderAdmins(); toast('Admin added successfully!');
+    ['new-admin-name','new-admin-email','new-admin-pass','new-admin-dept'].forEach(id=>document.getElementById(id).value='');
+  } else {
+    toast(res.message||'Could not add admin','error');
+  }
+}
+
+// ═══════════════════════════════════════
+// DASHBOARD COMPANY TRACK HELPERS
+// ═══════════════════════════════════════
+function toggleTrack(key, color) {
+  const panel = document.getElementById('track-rounds-' + key);
+  const arrow = document.getElementById('track-arrow-' + key);
+  const card  = document.getElementById('track-' + key);
+  const isOpen = panel.style.maxHeight !== '0px' && panel.style.maxHeight !== '';
+  // Close all others first
+  Object.keys(COMPANIES).forEach(k => {
+    const p = document.getElementById('track-rounds-' + k);
+    const a = document.getElementById('track-arrow-' + k);
+    const c = document.getElementById('track-' + k);
+    if (p && k !== key) { p.style.maxHeight = '0'; if(a) a.style.transform = 'rotate(0deg)'; if(c) c.style.borderColor = COMPANIES[k].color + '22'; }
+  });
+  if (isOpen) {
+    panel.style.maxHeight = '0';
+    arrow.style.transform = 'rotate(0deg)';
+    card.style.borderColor = color + '22';
+  } else {
+    panel.style.maxHeight = panel.scrollHeight + 240 + 'px';
+    arrow.style.transform = 'rotate(180deg)';
+    card.style.borderColor = color + '55';
+  }
+}
+
+function startExamFromDash(company, round) {
+  // Navigate to companies page, show detail, start exam
+  navigate('companies');
+  setTimeout(() => { startExam(company, round); }, 80);
+}
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!document.getElementById('auth-modal').classList.contains('hidden'))submitAuth();});
+initStorage();
+renderExperiences();
+
+// ── Auto-restore session from stored token ────────────────────
+(async () => {
+  const token = getToken();
+  if (token) {
+    const res = await api('/profile.php');
+    if (res.success) {
+      const u = res.user;
+      u.rollNo = u.roll_no || u.rollNo || '';
+      u.completedRounds = u.completedRounds || {};
+      u.scores = u.scores || {};
+      currentUser = u;
+      document.getElementById('landing').classList.add('hidden');
+      showApp(u);
+      if(u.role==='student') document.getElementById('share-exp-btn').style.display='inline-flex';
+    } else {
+      clearToken();   // token expired or invalid
+    }
+  }
+})();
+</script>
+<!-- ══════════ DELETE ACCOUNT MODAL ══════════ -->
+<div id="delete-account-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:420px;text-align:center">
+    <div style="font-size:56px;margin-bottom:14px">⚠️</div>
+    <h2 style="font-size:22px;font-weight:700;margin-bottom:10px;color:var(--rd)">Delete Your Account?</h2>
+    <p style="color:var(--tx2);font-size:14px;line-height:1.75;margin-bottom:8px">
+      This will <strong style="color:var(--rd)">permanently delete</strong> your account, all your exam scores, and progress data. This action <strong>cannot be undone</strong>.
+    </p>
+    <div style="background:rgba(249,106,106,.08);border:1px solid rgba(249,106,106,.25);border-radius:10px;padding:12px 16px;margin:18px 0;font-size:13px;color:var(--rd)">
+      🔒 Please type <strong>DELETE</strong> below to confirm
+    </div>
+    <input class="inp" id="delete-confirm-input" placeholder='Type "DELETE" to confirm' style="margin-bottom:18px;text-align:center;letter-spacing:1px" oninput="validateDeleteInput()"/>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-block" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger btn-block" id="confirm-delete-btn" onclick="executeDeleteAccount()" disabled style="opacity:.4;cursor:not-allowed">🗑 Delete Forever</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DELETE ACCOUNT LOGIC
+// ═══════════════════════════════════════
+function confirmDeleteAccount() {
+  document.getElementById('delete-confirm-input').value = '';
+  document.getElementById('confirm-delete-btn').disabled = true;
+  document.getElementById('confirm-delete-btn').style.opacity = '.4';
+  document.getElementById('confirm-delete-btn').style.cursor = 'not-allowed';
+  document.getElementById('delete-account-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-account-modal').classList.add('hidden');
+}
+
+function validateDeleteInput() {
+  const val = document.getElementById('delete-confirm-input').value.trim();
+  const btn = document.getElementById('confirm-delete-btn');
+  const isValid = val === 'DELETE';
+  btn.disabled = !isValid;
+  btn.style.opacity = isValid ? '1' : '.4';
+  btn.style.cursor = isValid ? 'pointer' : 'not-allowed';
+}
+
+async function executeDeleteAccount() {
+  if (!currentUser) return;
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.disabled = true; btn.textContent = 'Deleting...';
+  const res = await api('/delete_account.php', {method:'POST'});
+  if(res.success){
+    clearToken(); closeDeleteModal(); currentUser = null;
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('landing').classList.remove('hidden');
+    document.getElementById('share-exp-btn').style.display = 'none';
+    clearInterval(examTimer);
+    toast('Your account has been permanently deleted.');
+  } else {
+    btn.disabled = false; btn.textContent = '🗑 Delete Forever';
+    toast(res.message||'Could not delete account','error');
+  }
+}
+
+document.getElementById('delete-account-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('delete-account-modal')) closeDeleteModal();
+});
+</script>
+
+
